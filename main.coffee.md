@@ -20,7 +20,7 @@ Let's use AWS Cognitor to be all serverless all the time!
 
     table = new AWS.DynamoDB
       params: 
-        TableName: 'test'
+        TableName: 'swag'
 
     key = 'UNIQUE_KEY_ID'
     time = "#{+new Date}"
@@ -28,13 +28,13 @@ Let's use AWS Cognitor to be all serverless all the time!
     # Write the item to the table
     itemParams = 
       Item:
-        name: {S: key}
+        id: {S: key}
         created_at: {S: time}
         data: {S: 'data'}
 
     table.putItem itemParams, ->
       # Read the item from the table
-      table.getItem {Key: {name: {S: key}, created_at: {S: time}}}, (err, data) ->
+      table.getItem {Key: {id: {S: key}}}, (err, data) ->
         if err
           console.log err
         else
