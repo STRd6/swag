@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# 1428456625412
+
+CACHE:
+index.html
+master.json.js
+https://sdk.amazonaws.com/js/aws-sdk-2.1.22.js
+
+NETWORK:
+https://*
+http://*
+*
