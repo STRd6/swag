@@ -40,7 +40,7 @@ db.listTables (err, data) -&gt;
 
 table = <span class="keyword">new</span> AWS.DynamoDB
   params: 
-    TableName: <span class="string">'test'</span>
+    TableName: <span class="string">'swag'</span>
 
 key = <span class="string">'UNIQUE_KEY_ID'</span>
 time = <span class="string">"<span class="subst">#{+<span class="keyword">new</span> Date}</span>"</span>
@@ -48,13 +48,13 @@ time = <span class="string">"<span class="subst">#{+<span class="keyword">new</s
 <span class="comment"># Write the item to the table</span>
 itemParams = 
   Item:
-    name: {S: key}
+    id: {S: key}
     created_at: {S: time}
     data: {S: <span class="string">'data'</span>}
 
 table.putItem itemParams, -&gt;
   <span class="comment"># Read the item from the table</span>
-  table.getItem {Key: {name: {S: key}, created_at: {S: time}}}, (err, data) -&gt;
+  table.getItem {Key: {id: {S: key}}}, (err, data) -&gt;
     <span class="keyword">if</span> err
       console.log err
     <span class="keyword">else</span>
