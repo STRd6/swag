@@ -1,0 +1,3 @@
+remoteDependencies: [
+  "https://sdk.amazonaws.com/js/aws-sdk-2.1.22.js"
+]
