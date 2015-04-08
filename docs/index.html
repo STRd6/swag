@@ -36,7 +36,29 @@ AWS.config.credentials.get -&gt;
 <span class="comment"># YoloDB</span>
 db = <span class="keyword">new</span> AWS.DynamoDB()
 db.listTables (err, data) -&gt;
-  console.log(data.TableNames)</code></pre>
+  console.log(data.TableNames)
+
+table = <span class="keyword">new</span> AWS.DynamoDB
+  params: 
+    TableName: <span class="string">'test'</span>
+
+key = <span class="string">'UNIQUE_KEY_ID'</span>
+time = <span class="string">"<span class="subst">#{+<span class="keyword">new</span> Date}</span>"</span>
+
+<span class="comment"># Write the item to the table</span>
+itemParams = 
+  Item:
+    name: {S: key}
+    created_at: {S: time}
+    data: {S: <span class="string">'data'</span>}
+
+table.putItem itemParams, -&gt;
+  <span class="comment"># Read the item from the table</span>
+  table.getItem {Key: {name: {S: key}, created_at: {S: time}}}, (err, data) -&gt;
+    <span class="keyword">if</span> err
+      console.log err
+    <span class="keyword">else</span>
+      console.log data</code></pre>
 </div>
         </li>
         

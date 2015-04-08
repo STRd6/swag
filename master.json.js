@@ -19,7 +19,7 @@ window["STRd6/swag:master"]({
     },
     "main.coffee.md": {
       "path": "main.coffee.md",
-      "content": "\\*S\\*W\\*A\\*G\\*\n\nLet's use AWS Cognitor to be all serverless all the time!\n\n    AWS.config.update({region: 'us-east-1'})\n\n    AWS.config.credentials = new AWS.CognitoIdentityCredentials\n      IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'\n\n    console.log \"duder\"\n\n    AWS.config.credentials.get ->\n      # This doesn't seem to exist in the browser :|\n      # syncClient = new AWS.CognitoSyncManager()\n\n    # YoloDB\n    db = new AWS.DynamoDB()\n    db.listTables (err, data) ->\n      console.log(data.TableNames)\n",
+      "content": "\\*S\\*W\\*A\\*G\\*\n\nLet's use AWS Cognitor to be all serverless all the time!\n\n    AWS.config.update({region: 'us-east-1'})\n\n    AWS.config.credentials = new AWS.CognitoIdentityCredentials\n      IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'\n\n    console.log \"duder\"\n\n    AWS.config.credentials.get ->\n      # This doesn't seem to exist in the browser :|\n      # syncClient = new AWS.CognitoSyncManager()\n\n    # YoloDB\n    db = new AWS.DynamoDB()\n    db.listTables (err, data) ->\n      console.log(data.TableNames)\n\n    table = new AWS.DynamoDB\n      params: \n        TableName: 'test'\n\n    key = 'UNIQUE_KEY_ID'\n    time = \"#{+new Date}\"\n\n    # Write the item to the table\n    itemParams = \n      Item:\n        name: {S: key}\n        created_at: {S: time}\n        data: {S: 'data'}\n\n    table.putItem itemParams, ->\n      # Read the item from the table\n      table.getItem {Key: {name: {S: key}, created_at: {S: time}}}, (err, data) ->\n        if err\n          console.log err\n        else\n          console.log data\n",
       "mode": "100644"
     }
   },
@@ -31,7 +31,7 @@ window["STRd6/swag:master"]({
     },
     "main": {
       "path": "main",
-      "content": "(function() {\n  var db;\n\n  AWS.config.update({\n    region: 'us-east-1'\n  });\n\n  AWS.config.credentials = new AWS.CognitoIdentityCredentials({\n    IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'\n  });\n\n  console.log(\"duder\");\n\n  AWS.config.credentials.get(function() {});\n\n  db = new AWS.DynamoDB();\n\n  db.listTables(function(err, data) {\n    return console.log(data.TableNames);\n  });\n\n}).call(this);\n",
+      "content": "(function() {\n  var db, itemParams, key, table, time;\n\n  AWS.config.update({\n    region: 'us-east-1'\n  });\n\n  AWS.config.credentials = new AWS.CognitoIdentityCredentials({\n    IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'\n  });\n\n  console.log(\"duder\");\n\n  AWS.config.credentials.get(function() {});\n\n  db = new AWS.DynamoDB();\n\n  db.listTables(function(err, data) {\n    return console.log(data.TableNames);\n  });\n\n  table = new AWS.DynamoDB({\n    params: {\n      TableName: 'test'\n    }\n  });\n\n  key = 'UNIQUE_KEY_ID';\n\n  time = \"\" + (+(new Date));\n\n  itemParams = {\n    Item: {\n      name: {\n        S: key\n      },\n      created_at: {\n        S: time\n      },\n      data: {\n        S: 'data'\n      }\n    }\n  };\n\n  table.putItem(itemParams, function() {\n    return table.getItem({\n      Key: {\n        name: {\n          S: key\n        },\n        created_at: {\n          S: time\n        }\n      }\n    }, function(err, data) {\n      if (err) {\n        return console.log(err);\n      } else {\n        return console.log(data);\n      }\n    });\n  });\n\n}).call(this);\n",
       "type": "blob"
     }
   },
