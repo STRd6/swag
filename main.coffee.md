@@ -17,3 +17,25 @@ Let's use AWS Cognitor to be all serverless all the time!
     db = new AWS.DynamoDB()
     db.listTables (err, data) ->
       console.log(data.TableNames)
+
+    table = new AWS.DynamoDB
+      params: 
+        TableName: 'test'
+
+    key = 'UNIQUE_KEY_ID'
+    time = "#{+new Date}"
+
+    # Write the item to the table
+    itemParams = 
+      Item:
+        name: {S: key}
+        created_at: {S: time}
+        data: {S: 'data'}
+
+    table.putItem itemParams, ->
+      # Read the item from the table
+      table.getItem {Key: {name: {S: key}, created_at: {S: time}}}, (err, data) ->
+        if err
+          console.log err
+        else
+          console.log data
