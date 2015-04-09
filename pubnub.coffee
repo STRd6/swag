@@ -15,6 +15,7 @@ pubnub.subscribe
     console.log "Message", arguments
   connect: ->
     console.log "Connect", arguments
+    pub()
   disconnect: ->
     console.log "Disconnect", arguments
   error: ->
