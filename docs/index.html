@@ -22,43 +22,8 @@
 <p>Let&#39;s use AWS Cognitor to be all serverless all the time!</p>
 
             </div>
-            <div class="content"><pre><code class="lang-coffeescript">AWS.config.update({region: <span class="string">'us-east-1'</span>})
-
-AWS.config.credentials = <span class="keyword">new</span> AWS.CognitoIdentityCredentials
-  IdentityPoolId: <span class="string">'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'</span>
-
-console.log <span class="string">"duder"</span>
-
-AWS.config.credentials.get -&gt;
-  <span class="comment"># This doesn't seem to exist in the browser :|</span>
-  <span class="comment"># syncClient = new AWS.CognitoSyncManager()</span>
-
-<span class="comment"># YoloDB</span>
-db = <span class="keyword">new</span> AWS.DynamoDB()
-db.listTables (err, data) -&gt;
-  console.log(data.TableNames)
-
-table = <span class="keyword">new</span> AWS.DynamoDB
-  params: 
-    TableName: <span class="string">'swag'</span>
-
-key = <span class="string">'UNIQUE_KEY_ID'</span>
-time = <span class="string">"<span class="subst">#{+<span class="keyword">new</span> Date}</span>"</span>
-
-<span class="comment"># Write the item to the table</span>
-itemParams = 
-  Item:
-    id: {S: key}
-    created_at: {S: time}
-    data: {S: <span class="string">'data'</span>}
-
-table.putItem itemParams, -&gt;
-  <span class="comment"># Read the item from the table</span>
-  table.getItem {Key: {id: {S: key}}}, (err, data) -&gt;
-    <span class="keyword">if</span> err
-      console.log err
-    <span class="keyword">else</span>
-      console.log data</code></pre>
+            <div class="content"><pre><code class="lang-coffeescript"><span class="comment"># require "./aws"</span>
+require <span class="string">"./pubnub"</span></code></pre>
 </div>
         </li>
         
@@ -66,7 +31,8 @@ table.putItem itemParams, -&gt;
   </div>
   <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.6.3/coffee-script.min.js"></script>
-<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.22.js"></script><script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.22.js"></script>
+<script src="http://cdn.pubnub.com/pubnub-3.7.1.js"></script><script>
   (function() {
   var ErrorReporter, bindUpdates, createEditor, exec, findInteractiveElements, readShebang, runners;
 
