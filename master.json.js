@@ -29,7 +29,7 @@ window["STRd6/swag:master"]({
     },
     "pubnub.coffee": {
       "path": "pubnub.coffee",
-      "content": "global.pubnub = PUBNUB.init\n  publish_key: 'pub-c-010c4d6a-9e0f-43cc-87d3-d8e5ac1fb605'\n  subscribe_key: 'sub-c-df841964-de59-11e4-a1d1-0619f8945a4f'\n\npub = ->\n  console.log \"yolo\"\n  pubnub.publish\n    channel: 'demo_tutorial'\n    message:\n      color: \"blue\"\n\npubnub.subscribe\n  channel: 'demo_tutorial'\n  message: ->\n    console.log \"Message\", arguments\n  connect: ->\n    console.log \"Connect\", arguments\n  disconnect: ->\n    console.log \"Disconnect\", arguments\n  error: ->\n    console.error \"Error\", arguments\n\nconsole.log \"wat?\"\n",
+      "content": "global.pubnub = PUBNUB.init\n  publish_key: 'pub-c-010c4d6a-9e0f-43cc-87d3-d8e5ac1fb605'\n  subscribe_key: 'sub-c-df841964-de59-11e4-a1d1-0619f8945a4f'\n\npub = ->\n  console.log \"yolo\"\n  pubnub.publish\n    channel: 'demo_tutorial'\n    message:\n      color: \"blue\"\n\npubnub.subscribe\n  channel: 'demo_tutorial'\n  message: ->\n    console.log \"Message\", arguments\n  connect: ->\n    console.log \"Connect\", arguments\n    pub()\n  disconnect: ->\n    console.log \"Disconnect\", arguments\n  error: ->\n    console.error \"Error\", arguments\n\nconsole.log \"wat?\"\n",
       "mode": "100644"
     }
   },
@@ -51,7 +51,7 @@ window["STRd6/swag:master"]({
     },
     "pubnub": {
       "path": "pubnub",
-      "content": "(function() {\n  var pub;\n\n  global.pubnub = PUBNUB.init({\n    publish_key: 'pub-c-010c4d6a-9e0f-43cc-87d3-d8e5ac1fb605',\n    subscribe_key: 'sub-c-df841964-de59-11e4-a1d1-0619f8945a4f'\n  });\n\n  pub = function() {\n    console.log(\"yolo\");\n    return pubnub.publish({\n      channel: 'demo_tutorial',\n      message: {\n        color: \"blue\"\n      }\n    });\n  };\n\n  pubnub.subscribe({\n    channel: 'demo_tutorial',\n    message: function() {\n      return console.log(\"Message\", arguments);\n    },\n    connect: function() {\n      return console.log(\"Connect\", arguments);\n    },\n    disconnect: function() {\n      return console.log(\"Disconnect\", arguments);\n    },\n    error: function() {\n      return console.error(\"Error\", arguments);\n    }\n  });\n\n  console.log(\"wat?\");\n\n}).call(this);\n",
+      "content": "(function() {\n  var pub;\n\n  global.pubnub = PUBNUB.init({\n    publish_key: 'pub-c-010c4d6a-9e0f-43cc-87d3-d8e5ac1fb605',\n    subscribe_key: 'sub-c-df841964-de59-11e4-a1d1-0619f8945a4f'\n  });\n\n  pub = function() {\n    console.log(\"yolo\");\n    return pubnub.publish({\n      channel: 'demo_tutorial',\n      message: {\n        color: \"blue\"\n      }\n    });\n  };\n\n  pubnub.subscribe({\n    channel: 'demo_tutorial',\n    message: function() {\n      return console.log(\"Message\", arguments);\n    },\n    connect: function() {\n      console.log(\"Connect\", arguments);\n      return pub();\n    },\n    disconnect: function() {\n      return console.log(\"Disconnect\", arguments);\n    },\n    error: function() {\n      return console.error(\"Error\", arguments);\n    }\n  });\n\n  console.log(\"wat?\");\n\n}).call(this);\n",
       "type": "blob"
     }
   },
