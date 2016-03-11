@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>index</title>
+  <title>whimsy-fs</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="https://strd6.github.io/cdn/parallel/docco.css" />
@@ -16,12 +16,76 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
-    <p>*S*W*A*G*</p>
-<p>Let&#39;s use AWS Cognitor to be all serverless all the time!</p>
+    <h1 id="whimsy-fs">Whimsy FS</h1>
 
   </div>
-  <div class="content"><pre><code class="lang-coffeescript">require <span class="string">"./aws"</span>
-<span class="comment"># require "./pubnub"</span></code></pre>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-2">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-2">&#182;</a>
+    </div>
+    <p>DynamoDB Semantic Records linking to S3 Content Addressable Store</p>
+<p>DynamoDB Table</p>
+
+  </div>
+  <div class="content"><pre><code>  Primary keys     Index    Link to CAS
+    |       |        |           |
++-------+------+-----------+----------+------------------------
+| owner | path | createdAt |    sha   |  extra... (tags, etc.)</code></pre>
+</div>
+</li>
+<li id="section-3">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-3">&#182;</a>
+    </div>
+    <h2 id="saving-a-file">Saving a File</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-4">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-4">&#182;</a>
+    </div>
+    <p>sha is base64 url-encoded sha256 of file contents</p>
+<p>Compute sha, save to S3 and DynamoDB</p>
+<p>S3 path is &quot;${cognito-identity.amazonaws.com:sub}/data/#{sha}&quot;</p>
+<p>DynamoDB path is logical path ex: /Desktop/yolo.png
+owner is &quot;${cognito-identity.amazonaws.com:sub}&quot;
+createdAt number: unix epoch timestamp
+sha is the same sha that matches s3</p>
+<p>urls can be constructed by</p>
+
+  </div>
+  <div class="content"><pre><code>https://s3.amazonaws.com/#{bucket}/#{userId}/data/#{sha}
+https://#{base_cdn}/#{userId}/data/#{sha}
+https://#{personal_cdn}/data/#{sha}
+https://#{data_cdn}/#{sha}</code></pre>
+</div>
+</li>
+<li id="section-5">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-5">&#182;</a>
+    </div>
+    <p>Dynamo Access controls</p>
+
+  </div>
+  <div class="content"><pre><code>&quot;Condition&quot;: {
+  &quot;ForAllValues:StringEquals&quot;: {
+    &quot;dynamodb:LeadingKeys&quot;: [
+      &quot;${cognito-identity.amazonaws.com:sub}&quot;
+    ]
+  }
+}</code></pre>
 </div>
 </li>
     </ul>

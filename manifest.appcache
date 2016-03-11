@@ -1,11 +1,10 @@
 CACHE MANIFEST
-# 1429403083615
+# 1457671637945
 
 CACHE:
 index.html
-master.json.js
-https://sdk.amazonaws.com/js/aws-sdk-2.1.22.js
-http://cdn.pubnub.com/pubnub-3.7.1.js
+master.json
+https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js
 
 NETWORK:
 https://*
