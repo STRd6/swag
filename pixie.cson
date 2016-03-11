@@ -1,4 +1,4 @@
 remoteDependencies: [
-  "https://sdk.amazonaws.com/js/aws-sdk-2.1.22.js"
-  "http://cdn.pubnub.com/pubnub-3.7.1.js"
+  "https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js"
+  # "http://cdn.pubnub.com/pubnub-3.7.1.js"
 ]
