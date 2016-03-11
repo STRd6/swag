@@ -76,15 +76,47 @@ https://#{data_cdn}/#{sha}</code></pre>
     <div class="pilwrap">
       <a class="pilcrow" href="#section-5">&#182;</a>
     </div>
-    <p>Dynamo Access controls</p>
+    <h2 id="dynamodb-access-controls">DynamoDB Access controls</h2>
 
   </div>
-  <div class="content"><pre><code>&quot;Condition&quot;: {
-  &quot;ForAllValues:StringEquals&quot;: {
-    &quot;dynamodb:LeadingKeys&quot;: [
-      &quot;${cognito-identity.amazonaws.com:sub}&quot;
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-6">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-6">&#182;</a>
+    </div>
+    
+  </div>
+  <div class="content"><pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;Stmt1428459474000&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;dynamodb:GetItem&quot;,
+                &quot;dynamodb:BatchGetItem&quot;,
+                &quot;dynamodb:Query&quot;,
+                &quot;dynamodb:PutItem&quot;,
+                &quot;dynamodb:UpdateItem&quot;,
+                &quot;dynamodb:DeleteItem&quot;,
+                &quot;dynamodb:BatchWriteItem&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;arn:aws:dynamodb:us-east-1:186123361267:table/swag&quot;
+            ],
+            &quot;Condition&quot;: {
+                &quot;ForAllValues:StringEquals&quot;: {
+                    &quot;dynamodb:LeadingKeys&quot;: [
+                        &quot;${cognito-identity.amazonaws.com:sub}&quot;
+                    ]
+                }
+            }
+        }
     ]
-  }
 }</code></pre>
 </div>
 </li>
