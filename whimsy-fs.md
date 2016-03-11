@@ -32,12 +32,34 @@ urls can be constructed by
     https://#{personal_cdn}/data/#{sha}
     https://#{data_cdn}/#{sha}
 
-Dynamo Access controls
+DynamoDB Access controls
+------------------------
 
-    "Condition": {
-      "ForAllValues:StringEquals": {
-        "dynamodb:LeadingKeys": [
-          "${cognito-identity.amazonaws.com:sub}"
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "Stmt1428459474000",
+                "Effect": "Allow",
+                "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:BatchGetItem",
+                    "dynamodb:Query",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:DeleteItem",
+                    "dynamodb:BatchWriteItem"
+                ],
+                "Resource": [
+                    "arn:aws:dynamodb:us-east-1:186123361267:table/swag"
+                ],
+                "Condition": {
+                    "ForAllValues:StringEquals": {
+                        "dynamodb:LeadingKeys": [
+                            "${cognito-identity.amazonaws.com:sub}"
+                        ]
+                    }
+                }
+            }
         ]
-      }
     }
