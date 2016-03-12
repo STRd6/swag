@@ -38,4 +38,3 @@ module.exports = (blob) ->
   shaForBlob(blob)
   .then arrayBufferToBase64
   .then urlSafeBase64
-c

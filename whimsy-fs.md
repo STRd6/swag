@@ -69,12 +69,19 @@ Set up public read policy on S3 Bucket
 Cloudfront Config
 -----------------
 
-TODO
+https only
+
+Point at S3 bucket
+
+Enable options and whitelist headers for CORS
+
 
 Route53 Config
 --------------
 
-TODO
+fs.whimsy.space
+
+Create A (Alias record) pointing to cloudfront distribution
 
 
 AWS Policy Doc

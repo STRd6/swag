@@ -1,6 +1,4 @@
 
-AWS.config.update({region: 'us-east-1'})
-
 # Add logins when creating Cognito credentials
 # http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html
 # http://docs.aws.amazon.com/cognito/latest/developerguide/developer-authenticated-identities.html#updating-the-logins-map
@@ -14,75 +12,101 @@ AWS.config.update({region: 'us-east-1'})
    #}
 #});
 
-log = console.log.bind(console)
+log = (obj, rest...) ->
+  console.log obj, rest...
+  return obj
+
+pinvoke = (object, method, params...) ->
+  new Promise (resolve, reject) ->
+    object[method] params..., (err, result) ->
+      if err
+        reject err 
+        return
+
+      resolve result
+
 SHA = require "./lib/sha"
+
+AWS.config.update({region: 'us-east-1'})
 
 AWS.config.credentials = new AWS.CognitoIdentityCredentials
   IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
 
-s3Test = (err) ->
-  throw err if err
+uploadToS3 = (bucket, file, key) ->
+  params =
+    Key: key
+    ContentType: file.type
+    Body: file
+    # ACL: 'public-read'
 
-  id = AWS.config.credentials.identityId
+  pinvoke bucket, "putObject", params
 
-  file = new File ["yolo"], "filename.txt", {type: "text/plain"}
-
-  log file
-
-  SHA file
-  .then (sha) ->
-    key = "#{id}/#{sha}"
-
-    bucket = new AWS.S3
-      params:
-        Bucket: "whimsy-fs"
-
-    params =
-      Key: key
-      ContentType: file.type
-      Body: file
-      # ACL: 'public-read'
-  
-    bucket.putObject params, (err, data) ->
-      throw err if err
-  
-      log data
-
-dynamoDBTest = (err) ->
-  throw err if err
-  log AWS.config.credentials
-
-  id = AWS.config.credentials.identityId
-
-  table = new AWS.DynamoDB
-    params:
-      TableName: 'whimsy-fs'
-
-  path = "/test2"
+writeToDynamoDB = (table, id, path, sha) ->
   time = "#{+new Date}"
 
   # Write the item to the table
-  itemParams =
+  params =
     Item:
       owner: {S: id}
       path: {S: path}
       created_at: {S: time}
-      sha: {S: "test"}
+      sha: {S: sha}
 
-  table.putItem itemParams, (err) ->
-    if err
-      console.log err
-      return
+  pinvoke table, "putItem", params
 
-    # Read the item from the table
-    table.getItem {Key: {
-      owner: {S: id},
+queryDynamoDB = (table, id) ->
+  table = table
+
+  params =
+    AttributesToGet: [
+      "path"
+      "sha"
+    ]
+    KeyConditions:
+      owner:
+        ComparisonOperator: "EQ"
+        AttributeValueList: [S: id]
+
+  pinvoke table, "query", params
+
+readFromDynamoDB = (id, path) ->
+  params = 
+    Key:
+      owner: {S: id}
       path: {S: path}
-    }}, (err, data) ->
-      if err
-        console.log err
-      else
-        console.log data
 
-# AWS.config.credentials.get(dynamoDBTest)
-# AWS.config.credentials.get(s3Test)
+  # Read the item from the table
+  pinvoke table, "getItem", params
+
+uploadFile = (table, bucket, id, file, path) ->
+
+  SHA file
+  .then (sha) ->
+    s3Key = "#{id}/#{sha}"
+
+    Promise.all [
+      uploadToS3(bucket, file, s3Key)
+      writeToDynamoDB(table, id, path, sha)
+    ]
+
+do ->
+  table = new AWS.DynamoDB
+    params:
+      TableName: 'whimsy-fs'
+
+  bucket = new AWS.S3
+    params:
+      Bucket: "whimsy-fs"
+
+  file = new File ["yolo"], "filename.txt", {type: "text/plain"}
+
+  pinvoke AWS.config.credentials, "get"
+  .then ->
+    id = AWS.config.credentials.identityId
+
+    uploadFile(table, bucket, id, file, "/test/file.txt")
+    .catch (e) ->
+      console.error e
+    .then ->
+      queryDynamoDB(table, id)
+    .then log
