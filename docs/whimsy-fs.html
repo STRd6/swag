@@ -57,18 +57,18 @@
     </div>
     <p>sha is base64 url-encoded sha256 of file contents</p>
 <p>Compute sha, save to S3 and DynamoDB</p>
-<p>S3 path is &quot;${cognito-identity.amazonaws.com:sub}/data/#{sha}&quot;</p>
+<p>S3 path is &quot;${cognito-identity.amazonaws.com:sub}/#{sha}&quot;</p>
 <p>DynamoDB path is logical path ex: /Desktop/yolo.png
 owner is &quot;${cognito-identity.amazonaws.com:sub}&quot;
 createdAt number: unix epoch timestamp
-sha is the same sha that matches s3</p>
+sha is the same sha that matches s3
+arbitrary extra meta data can be added</p>
 <p>urls can be constructed by</p>
 
   </div>
-  <div class="content"><pre><code>https://s3.amazonaws.com/#{bucket}/#{userId}/data/#{sha}
-https://#{base_cdn}/#{userId}/data/#{sha}
-https://#{personal_cdn}/data/#{sha}
-https://#{data_cdn}/#{sha}</code></pre>
+  <div class="content"><pre><code>   https://s3.amazonaws.com/#{bucket}/#{userId}/#{sha}
+-&gt; https://#{base_cdn}/#{userId}/#{sha}
+   https://#{user_cdn}/#{sha}</code></pre>
 </div>
 </li>
 <li id="section-5">
@@ -76,7 +76,7 @@ https://#{data_cdn}/#{sha}</code></pre>
     <div class="pilwrap">
       <a class="pilcrow" href="#section-5">&#182;</a>
     </div>
-    <h2 id="dynamodb-access-controls">DynamoDB Access controls</h2>
+    <h2 id="aws-policy-doc">AWS Policy Doc</h2>
 
   </div>
   <div class="content"><pre><code>
@@ -94,7 +94,6 @@ https://#{data_cdn}/#{sha}</code></pre>
     &quot;Version&quot;: &quot;2012-10-17&quot;,
     &quot;Statement&quot;: [
         {
-            &quot;Sid&quot;: &quot;Stmt1428459474000&quot;,
             &quot;Effect&quot;: &quot;Allow&quot;,
             &quot;Action&quot;: [
                 &quot;dynamodb:GetItem&quot;,
@@ -106,7 +105,7 @@ https://#{data_cdn}/#{sha}</code></pre>
                 &quot;dynamodb:BatchWriteItem&quot;
             ],
             &quot;Resource&quot;: [
-                &quot;arn:aws:dynamodb:us-east-1:186123361267:table/swag&quot;
+                &quot;arn:aws:dynamodb:us-east-1:186123361267:table/whimsy-fs&quot;
             ],
             &quot;Condition&quot;: {
                 &quot;ForAllValues:StringEquals&quot;: {
@@ -115,6 +114,32 @@ https://#{data_cdn}/#{sha}</code></pre>
                     ]
                 }
             }
+        },
+        {
+            &quot;Action&quot;: [
+                &quot;s3:ListBucket&quot;
+            ],
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Resource&quot;: [
+                &quot;arn:aws:s3:::whimsy-fs&quot;
+            ],
+            &quot;Condition&quot;: {
+                &quot;StringLike&quot;: {
+                    &quot;s3:prefix&quot;: [
+                        &quot;${cognito-identity.amazonaws.com:sub}/*&quot;
+                    ]
+                }
+            }
+        },
+        {
+            &quot;Action&quot;: [
+                &quot;s3:GetObject&quot;,
+                &quot;s3:PutObject&quot;
+            ],
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Resource&quot;: [
+                &quot;arn:aws:s3:::whimsy-fs/${cognito-identity.amazonaws.com:sub}/*&quot;
+            ]
         }
     ]
 }</code></pre>
