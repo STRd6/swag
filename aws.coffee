@@ -85,4 +85,4 @@ dynamoDBTest = (err) ->
         console.log data
 
 # AWS.config.credentials.get(dynamoDBTest)
-AWS.config.credentials.get(s3Test)
+# AWS.config.credentials.get(s3Test)
