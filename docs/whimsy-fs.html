@@ -76,7 +76,7 @@ arbitrary extra meta data can be added</p>
     <div class="pilwrap">
       <a class="pilcrow" href="#section-5">&#182;</a>
     </div>
-    <h2 id="aws-policy-doc">AWS Policy Doc</h2>
+    <h2 id="s3-bucket-config">S3 Bucket Config</h2>
 
   </div>
   <div class="content"><pre><code>
@@ -87,6 +87,89 @@ arbitrary extra meta data can be added</p>
   <div class="annotation">
     <div class="pilwrap">
       <a class="pilcrow" href="#section-6">&#182;</a>
+    </div>
+    <p>You need to set up CORS on the S3 Bucket to allow posting from the browser</p>
+
+  </div>
+  <div class="content"><pre><code>&lt;CORSConfiguration xmlns=&quot;http://s3.amazonaws.com/doc/2006-03-01&quot;&gt;
+   &lt;CORSRule&gt;
+      &lt;AllowedOrigin&gt;*&lt;/AllowedOrigin&gt;
+      &lt;AllowedMethod&gt;GET&lt;/AllowedMethod&gt;
+      &lt;AllowedMethod&gt;PUT&lt;/AllowedMethod&gt;
+      &lt;AllowedMethod&gt;POST&lt;/AllowedMethod&gt;
+      &lt;AllowedMethod&gt;DELETE&lt;/AllowedMethod&gt;
+      &lt;AllowedHeader&gt;*&lt;/AllowedHeader&gt;
+   &lt;/CORSRule&gt;
+&lt;/CORSConfiguration&gt;</code></pre>
+</div>
+</li>
+<li id="section-7">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-7">&#182;</a>
+    </div>
+    <p>Set up public read policy on S3 Bucket</p>
+
+  </div>
+  <div class="content"><pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Principal&quot;: &quot;*&quot;,
+            &quot;Action&quot;: [
+                &quot;s3:GetObject&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;arn:aws:s3:::whimsy-fs/*&quot;
+            ]
+        }
+    ]
+}</code></pre>
+</div>
+</li>
+<li id="section-8">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-8">&#182;</a>
+    </div>
+    <h2 id="cloudfront-config">Cloudfront Config</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-9">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-9">&#182;</a>
+    </div>
+    <p>TODO</p>
+<h2 id="route53-config">Route53 Config</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-10">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-10">&#182;</a>
+    </div>
+    <p>TODO</p>
+<h2 id="aws-policy-doc">AWS Policy Doc</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-11">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-11">&#182;</a>
     </div>
     
   </div>
