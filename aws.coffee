@@ -21,22 +21,24 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials
 
 dynamoDBTest = (err) ->
   throw err if err
+  log AWS.config.credentials
+
   id = AWS.config.credentials.identityId
-  log id
 
   table = new AWS.DynamoDB
     params:
-      TableName: 'swag'
+      TableName: 'whimsy-fs'
 
-  key = id
+  path = "/test2"
   time = "#{+new Date}"
 
   # Write the item to the table
   itemParams =
     Item:
-      id: {S: key}
+      owner: {S: id}
+      path: {S: path}
       created_at: {S: time}
-      data: {S: 'data'}
+      sha: {S: "test"}
 
   table.putItem itemParams, (err) ->
     if err
@@ -44,7 +46,10 @@ dynamoDBTest = (err) ->
       return
 
     # Read the item from the table
-    table.getItem {Key: {id: {S: key}}}, (err, data) ->
+    table.getItem {Key: {
+      owner: {S: id}, 
+      path: {S: path}
+    }}, (err, data) ->
       if err
         console.log err
       else
