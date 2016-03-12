@@ -4,7 +4,7 @@ AWS.config.update({region: 'us-east-1'})
 # Add logins when creating Cognito credentials
 # http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html
 # http://docs.aws.amazon.com/cognito/latest/developerguide/developer-authenticated-identities.html#updating-the-logins-map
-# Once you obtain an identity ID and session token from your backend, you will 
+# Once you obtain an identity ID and session token from your backend, you will
 # to pass them into the AWS.CognitoIdentityCredentials provider. Here's an example:
 #AWS.config.credentials = new AWS.CognitoIdentityCredentials({
    #IdentityPoolId: 'IDENTITY_POOL_ID',
@@ -15,9 +15,38 @@ AWS.config.update({region: 'us-east-1'})
 #});
 
 log = console.log.bind(console)
+SHA = require "./lib/sha"
 
 AWS.config.credentials = new AWS.CognitoIdentityCredentials
   IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
+
+s3Test = (err) ->
+  throw err if err
+
+  id = AWS.config.credentials.identityId
+
+  file = new File ["yolo"], "filename.txt", {type: "text/plain"}
+
+  log file
+
+  SHA file
+  .then (sha) ->
+    key = "#{id}/#{sha}"
+
+    bucket = new AWS.S3
+      params:
+        Bucket: "whimsy-fs"
+
+    params =
+      Key: key
+      ContentType: file.type
+      Body: file
+      # ACL: 'public-read'
+  
+    bucket.putObject params, (err, data) ->
+      throw err if err
+  
+      log data
 
 dynamoDBTest = (err) ->
   throw err if err
@@ -47,7 +76,7 @@ dynamoDBTest = (err) ->
 
     # Read the item from the table
     table.getItem {Key: {
-      owner: {S: id}, 
+      owner: {S: id},
       path: {S: path}
     }}, (err, data) ->
       if err
@@ -55,5 +84,5 @@ dynamoDBTest = (err) ->
       else
         console.log data
 
-# dynamoDBTest()
-AWS.config.credentials.get(dynamoDBTest)
+# AWS.config.credentials.get(dynamoDBTest)
+AWS.config.credentials.get(s3Test)

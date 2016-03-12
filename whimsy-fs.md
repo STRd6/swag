@@ -32,6 +32,51 @@ urls can be constructed by
     -> https://#{base_cdn}/#{userId}/#{sha}
        https://#{user_cdn}/#{sha}
 
+S3 Bucket Config
+----------------
+
+You need to set up CORS on the S3 Bucket to allow posting from the browser
+
+    <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01">
+       <CORSRule>
+          <AllowedOrigin>*</AllowedOrigin>
+          <AllowedMethod>GET</AllowedMethod>
+          <AllowedMethod>PUT</AllowedMethod>
+          <AllowedMethod>POST</AllowedMethod>
+          <AllowedMethod>DELETE</AllowedMethod>
+          <AllowedHeader>*</AllowedHeader>
+       </CORSRule>
+    </CORSConfiguration>
+
+Set up public read policy on S3 Bucket
+
+    {
+    	"Version": "2012-10-17",
+    	"Statement": [
+    		{
+    			"Effect": "Allow",
+    			"Principal": "*",
+    			"Action": [
+    				"s3:GetObject"
+    			],
+    			"Resource": [
+    				"arn:aws:s3:::whimsy-fs/*"
+    			]
+    		}
+    	]
+    }
+
+Cloudfront Config
+-----------------
+
+TODO
+
+Route53 Config
+--------------
+
+TODO
+
+
 AWS Policy Doc
 ------------------
 
