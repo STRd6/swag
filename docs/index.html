@@ -91,29 +91,42 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
 
         fs = require(<span class="string">'./fs'</span>)(id, bucket)
 
-        -&gt; 
-          file = <span class="keyword">new</span> File [<span class="string">'yolo'</span>], <span class="string">"file.txt"</span>, type: <span class="string">"text/plain"</span>
+        file = <span class="keyword">new</span> File [<span class="string">'yolo'</span>], <span class="string">"file.txt"</span>, type: <span class="string">"text/plain"</span>
+        <span class="comment"># fs.put "Desktop/stuff/cool/wat.txt", file</span>
+        -&gt;
           [<span class="string">"Desktop/cool.txt"</span>, <span class="string">"Desktop/rad.txt"</span>, <span class="string">"Desktop/yolo.txt"</span>, <span class="string">"Desktop/duder.txt"</span>].forEach (path) -&gt;
             fs.put path, file
 
-        Folder = require <span class="string">"./templates/folder"</span>
+        FolderTemplate = require <span class="string">"./templates/folder"</span>
+        FileTemplate = require <span class="string">"./templates/file"</span>
+
+        <span class="function"><span class="title">FilePresenter</span></span> = (data) -&gt;
+          {name, path} = data
+
+          name: name
+          path: path
+          click: (e) -&gt;
+            e.filetreeHandled = <span class="literal">true</span>
+
+            <span class="keyword">return</span>
 
         <span class="function"><span class="title">FolderPresenter</span></span> = (data) -&gt;
-          <span class="keyword">if</span> <span class="keyword">typeof</span> data <span class="keyword">is</span> <span class="string">"string"</span>
-            path = data
-          <span class="keyword">else</span>
-            {path, folders, files} = data
+          {path, folders, files, name} = data
+          name ?= path
           folders ?= []
           files ?= []
 
           self =
             Folder: (data) -&gt;
-              Folder FolderPresenter data
+              FolderTemplate FolderPresenter data
+            File: (data) -&gt;
+              FileTemplate FilePresenter data
             class: -&gt;
               <span class="string">"expanded"</span> <span class="keyword">if</span> self.expanded()
             click: (e) -&gt;
-              console.log e
-              e.stopPropagation()
+              <span class="keyword">return</span> <span class="keyword">if</span> e.filetreeHandled
+              e.filetreeHandled = <span class="literal">true</span>
+
               self.expanded.toggle()
               <span class="keyword">if</span> self.expanded()
                 self.refresh()
@@ -122,6 +135,7 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
             expanded: Observable <span class="literal">false</span>
             folders: Observable folders
             files: Observable files
+            name: name
             path: path
             refresh: -&gt;
               console.log <span class="string">"List:"</span>, path
@@ -130,7 +144,7 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
                 self.folders(folders)
 
 
-        document.body.appendChild Folder FolderPresenter <span class="string">"/"</span>
+        document.body.appendChild FolderTemplate FolderPresenter path: <span class="string">"/"</span>
 
   <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>
