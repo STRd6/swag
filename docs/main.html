@@ -20,7 +20,32 @@
 <p>Let&#39;s use AWS Cognito to be all serverless all the time!</p>
 
   </div>
-  <div class="content"><pre><code class="lang-coffeescript">require <span class="string">"./aws"</span>
+  <div class="content"><pre><code class="lang-coffeescript"><span class="comment"># Add logins when creating Cognito credentials</span>
+<span class="comment"># http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html</span>
+<span class="comment"># http://docs.aws.amazon.com/cognito/latest/developerguide/developer-authenticated-identities.html#updating-the-logins-map</span>
+<span class="comment"># Once you obtain an identity ID and session token from your backend, you will</span>
+<span class="comment"># to pass them into the AWS.CognitoIdentityCredentials provider. Here's an example:</span>
+<span class="comment">#AWS.config.credentials = new AWS.CognitoIdentityCredentials({</span>
+   <span class="comment">#IdentityPoolId: 'IDENTITY_POOL_ID',</span>
+   <span class="comment">#IdentityId: 'IDENTITY_ID_RETURNED_FROM_YOUR_PROVIDER',</span>
+   <span class="comment">#Logins: {</span>
+      <span class="comment">#'cognito-identity.amazonaws.com': 'TOKEN_RETURNED_FROM_YOUR_PROVIDER'</span>
+   <span class="comment">#}</span>
+<span class="comment">#});</span>
+
+AWS.config.update
+  region: <span class="string">'us-east-1'</span>
+
+AWS.config.credentials = <span class="keyword">new</span> AWS.CognitoIdentityCredentials
+  IdentityPoolId: <span class="string">'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'</span>
+
+table = <span class="keyword">new</span> AWS.DynamoDB
+  params:
+    TableName: <span class="string">'whimsy-fs'</span>
+
+bucket = <span class="keyword">new</span> AWS.S3
+  params:
+    Bucket: <span class="string">"whimsy-fs"</span>
 
 require <span class="string">"./amazon_login"</span>
 document.body.appendChild require(<span class="string">"./templates/login"</span>)()
@@ -53,8 +78,15 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
 
       AWS.config.credentials.get (err) -&gt;
         <span class="keyword">return</span> console.error err <span class="keyword">if</span> err
-
         console.log AWS.config.credentials
+
+        id = AWS.config.credentials.identityId
+
+        fs = require(<span class="string">'./fs'</span>)(id, table, bucket)
+
+        file = <span class="keyword">new</span> File [<span class="string">'yolo'</span>], <span class="string">"file.txt"</span>, type: <span class="string">"text/plain"</span>
+
+        fs.put <span class="string">"yolo.txt"</span>, file
 
   <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>
