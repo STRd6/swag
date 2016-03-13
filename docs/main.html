@@ -34,10 +34,8 @@
 <span class="comment">#});</span>
 
 style = document.createElement <span class="string">"style"</span>
-style.innerHTML = require <span class="string">"./style"</span> 
+style.innerHTML = require <span class="string">"./style"</span>
 document.head.appendChild style
-
-Observable = require <span class="string">"observable"</span>
 
 {log} = require <span class="string">"./util"</span>
 
@@ -98,53 +96,9 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
             fs.put path, file
 
         FolderTemplate = require <span class="string">"./templates/folder"</span>
-        FileTemplate = require <span class="string">"./templates/file"</span>
+        FolderPresenter = require <span class="string">"./presenters/folder"</span>
 
-        <span class="function"><span class="title">FilePresenter</span></span> = (data) -&gt;
-          {name, path} = data
-
-          name: name
-          path: path
-          click: (e) -&gt;
-            e.filetreeHandled = <span class="literal">true</span>
-
-            <span class="keyword">return</span>
-
-        <span class="function"><span class="title">FolderPresenter</span></span> = (data) -&gt;
-          {path, folders, files, name} = data
-          name ?= path
-          folders ?= []
-          files ?= []
-
-          self =
-            Folder: (data) -&gt;
-              FolderTemplate FolderPresenter data
-            File: (data) -&gt;
-              FileTemplate FilePresenter data
-            class: -&gt;
-              <span class="string">"expanded"</span> <span class="keyword">if</span> self.expanded()
-            click: (e) -&gt;
-              <span class="keyword">return</span> <span class="keyword">if</span> e.filetreeHandled
-              e.filetreeHandled = <span class="literal">true</span>
-
-              self.expanded.toggle()
-              <span class="keyword">if</span> self.expanded()
-                self.refresh()
-
-              <span class="keyword">return</span> <span class="literal">false</span>
-            expanded: Observable <span class="literal">false</span>
-            folders: Observable folders
-            files: Observable files
-            name: name
-            path: path
-            refresh: -&gt;
-              console.log <span class="string">"List:"</span>, path
-              fs.list(path).<span class="keyword">then</span> ({files, folders}) -&gt;
-                self.files(files)
-                self.folders(folders)
-
-
-        document.body.appendChild FolderTemplate FolderPresenter path: <span class="string">"/"</span>
+        document.body.appendChild FolderTemplate FolderPresenter {path: <span class="string">"/"</span>}, fs
 
   <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>
