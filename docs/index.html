@@ -20,7 +20,29 @@
 <p>Let&#39;s use AWS Cognitor to be all serverless all the time!</p>
 
   </div>
-  <div class="content"><pre><code class="lang-coffeescript">require <span class="string">"./aws"</span></code></pre>
+  <div class="content"><pre><code class="lang-coffeescript">require <span class="string">"./aws"</span>
+
+require <span class="string">"./amazon_login"</span>
+document.body.appendChild require(<span class="string">"./templates/login"</span>)()
+
+document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span class="function"><span class="title">onclick</span></span> = -&gt;
+  options = { scope : <span class="string">'profile'</span> }
+  amazon.Login.authorize options, (resp) -&gt;
+    <span class="keyword">if</span> !resp.error
+      <span class="keyword">debugger</span>
+      creds = AWS.config.credentials
+
+      creds.params.Logins =
+        <span class="string">'www.amazon.com'</span>: resp.access_token
+
+      creds.expired = <span class="literal">true</span>
+
+      AWS.config.credentials.get (err) -&gt;
+        <span class="keyword">return</span> console.error err <span class="keyword">if</span> err
+
+        console.log AWS.config.credentials
+
+  <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>
 </li>
     </ul>
