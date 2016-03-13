@@ -84,8 +84,8 @@ fs.whimsy.space
 Create A (Alias record) pointing to cloudfront distribution
 
 
-AWS Policy Doc
-------------------
+AWS Cognito User Policy
+-----------------------
 
     {
         "Version": "2012-10-17",
@@ -140,3 +140,15 @@ AWS Policy Doc
             }
         ]
     }
+
+Using Amazon Login for Auth
+---------------------------
+
+Could also instead use FB, Google, pretty much any OAuth
+
+Set up app at https://sellercentral.amazon.com/gp/homepage.html the interface is
+hideous yet functional.
+
+Update Cognito Identity Pool with Amazon App Id
+
+Optionally add Twitter, Goog, FB, etc.

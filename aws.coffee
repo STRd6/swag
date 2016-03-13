@@ -55,6 +55,8 @@ writeToDynamoDB = (table, id, path, sha) ->
   pinvoke table, "putItem", params
 
 queryDynamoDB = (table, id) ->
+  # TODO: Start from
+  # TODO: Additional requests when results are incomplete
   table = table
 
   params =
@@ -89,7 +91,7 @@ uploadFile = (table, bucket, id, file, path) ->
       writeToDynamoDB(table, id, path, sha)
     ]
 
-do ->
+->
   table = new AWS.DynamoDB
     params:
       TableName: 'whimsy-fs'
