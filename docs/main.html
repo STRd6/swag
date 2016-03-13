@@ -33,6 +33,8 @@
    <span class="comment">#}</span>
 <span class="comment">#});</span>
 
+{log} = require <span class="string">"./util"</span>
+
 AWS.config.update
   region: <span class="string">'us-east-1'</span>
 
@@ -82,11 +84,18 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
 
         id = AWS.config.credentials.identityId
 
-        fs = require(<span class="string">'./fs'</span>)(id, table, bucket)
+        fs = require(<span class="string">'./fs'</span>)(id, bucket)
 
-        file = <span class="keyword">new</span> File [<span class="string">'yolo'</span>], <span class="string">"file.txt"</span>, type: <span class="string">"text/plain"</span>
+        -&gt; 
+          file = <span class="keyword">new</span> File [<span class="string">'yolo'</span>], <span class="string">"file.txt"</span>, type: <span class="string">"text/plain"</span>
+          [<span class="string">"Desktop/cool.txt"</span>, <span class="string">"Desktop/rad.txt"</span>, <span class="string">"Desktop/yolo.txt"</span>, <span class="string">"Desktop/duder.txt"</span>].forEach (path) -&gt;
+            fs.put path, file
 
-        fs.put <span class="string">"yolo.txt"</span>, file
+        fs.list()
+        .<span class="keyword">then</span> log
+        .<span class="keyword">then</span> -&gt;
+          fs.list(<span class="string">"Desktop"</span>)
+        .<span class="keyword">then</span> log
 
   <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>

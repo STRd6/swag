@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>index</title>
+  <title>TODO</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="https://strd6.github.io/cdn/parallel/docco.css" />
@@ -16,88 +16,29 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
-    <p>*S*W*A*G*</p>
-<p>Let&#39;s use AWS Cognito to be all serverless all the time!</p>
+    <h1 id="todo">TODO</h1>
 
   </div>
-  <div class="content"><pre><code class="lang-coffeescript"><span class="comment"># Add logins when creating Cognito credentials</span>
-<span class="comment"># http://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html</span>
-<span class="comment"># http://docs.aws.amazon.com/cognito/latest/developerguide/developer-authenticated-identities.html#updating-the-logins-map</span>
-<span class="comment"># Once you obtain an identity ID and session token from your backend, you will</span>
-<span class="comment"># to pass them into the AWS.CognitoIdentityCredentials provider. Here's an example:</span>
-<span class="comment">#AWS.config.credentials = new AWS.CognitoIdentityCredentials({</span>
-   <span class="comment">#IdentityPoolId: 'IDENTITY_POOL_ID',</span>
-   <span class="comment">#IdentityId: 'IDENTITY_ID_RETURNED_FROM_YOUR_PROVIDER',</span>
-   <span class="comment">#Logins: {</span>
-      <span class="comment">#'cognito-identity.amazonaws.com': 'TOKEN_RETURNED_FROM_YOUR_PROVIDER'</span>
-   <span class="comment">#}</span>
-<span class="comment">#});</span>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-2">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-2">&#182;</a>
+    </div>
+    <p>Maintain identity id from unauth -&gt; auth user</p>
+<p>Observe and display auth status (user name/email)</p>
+<p>Handle auth refresh when credentials expire</p>
+<p>Log out button</p>
+<p>Display Filetree</p>
+<p>Expand/collapse folders</p>
+<p>Embed pixel editor (load and save files)</p>
 
-{log} = require <span class="string">"./util"</span>
-
-AWS.config.update
-  region: <span class="string">'us-east-1'</span>
-
-AWS.config.credentials = <span class="keyword">new</span> AWS.CognitoIdentityCredentials
-  IdentityPoolId: <span class="string">'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'</span>
-
-table = <span class="keyword">new</span> AWS.DynamoDB
-  params:
-    TableName: <span class="string">'whimsy-fs'</span>
-
-bucket = <span class="keyword">new</span> AWS.S3
-  params:
-    Bucket: <span class="string">"whimsy-fs"</span>
-
-require <span class="string">"./amazon_login"</span>
-document.body.appendChild require(<span class="string">"./templates/login"</span>)()
-
-<span class="function"><span class="title">queryUserInfo</span></span> = (token) -&gt;
-  fetch <span class="string">"https://api.amazon.com/user/profile"</span>,
-    headers:
-      Authorization: <span class="string">"bearer <span class="subst">#{token}</span>"</span>
-      Accept: <span class="string">"application/json"</span>
-  .<span class="keyword">then</span> (response) -&gt;
-    response.json()
-  .<span class="keyword">then</span> (json) -&gt;
-    console.log json
-  .<span class="keyword">catch</span> (e) -&gt;
-    console.error e
-
-document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span class="function"><span class="title">onclick</span></span> = -&gt;
-  options = { scope : <span class="string">'profile'</span> }
-  amazon.Login.authorize options, (resp) -&gt;
-    <span class="keyword">if</span> !resp.error
-      token = resp.access_token
-      creds = AWS.config.credentials
-
-      creds.params.Logins =
-        <span class="string">'www.amazon.com'</span>: token
-
-      creds.expired = <span class="literal">true</span>
-
-      queryUserInfo(token)
-
-      AWS.config.credentials.get (err) -&gt;
-        <span class="keyword">return</span> console.error err <span class="keyword">if</span> err
-        console.log AWS.config.credentials
-
-        id = AWS.config.credentials.identityId
-
-        fs = require(<span class="string">'./fs'</span>)(id, bucket)
-
-        -&gt; 
-          file = <span class="keyword">new</span> File [<span class="string">'yolo'</span>], <span class="string">"file.txt"</span>, type: <span class="string">"text/plain"</span>
-          [<span class="string">"Desktop/cool.txt"</span>, <span class="string">"Desktop/rad.txt"</span>, <span class="string">"Desktop/yolo.txt"</span>, <span class="string">"Desktop/duder.txt"</span>].forEach (path) -&gt;
-            fs.put path, file
-
-        fs.list()
-        .<span class="keyword">then</span> log
-        .<span class="keyword">then</span> -&gt;
-          fs.list(<span class="string">"Desktop"</span>)
-        .<span class="keyword">then</span> log
-
-  <span class="keyword">return</span> <span class="literal">false</span></code></pre>
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
 </div>
 </li>
     </ul>
