@@ -1,84 +1,49 @@
-SHA = require "./lib/sha"
+{log, pinvoke, startsWith, endsWith} = require "./util"
 
-log = (obj, rest...) ->
-  console.log obj, rest...
-  return obj
+uploadToS3 = (bucket, key, file, options={}) ->
+  {cacheControl} = options
 
-pinvoke = (object, method, params...) ->
-  new Promise (resolve, reject) ->
-    object[method] params..., (err, result) ->
-      if err
-        reject err 
-        return
+  cacheControl ?= 0
 
-      resolve result
-
-uploadToS3 = (bucket, file, key) ->
-  params =
+  pinvoke bucket, "putObject",
     Key: key
     ContentType: file.type
     Body: file
+    CacheControl: "max-age=#{cacheControl}"
 
-  pinvoke bucket, "putObject", params
+getFromS3 = (bucket, key) ->
+  fetch("https://#{bucket.config.params.Bucket}.s3.amazonaws.com/#{key}")
 
-writeToDynamoDB = (table, id, path, sha) ->
-  time = "#{+new Date}"
+list = (bucket, id, dir) ->
+  delimiter = "/"
 
-  # Write the item to the table
-  params =
-    Item:
-      owner: {S: id}
-      path: {S: path}
-      created_at: {S: time}
-      sha: {S: sha}
+  unless startsWith dir, delimiter
+    dir = "#{delimiter}#{dir}"
 
-  pinvoke table, "putItem", params
+  unless endsWith dir, delimiter
+    dir = "#{dir}#{delimiter}"
+  
+  prefix = "#{id}#{dir}"
 
-queryDynamoDB = (table, id) ->
-  # TODO: Start from
-  # TODO: Additional requests when results are incomplete
-  table = table
+  pinvoke bucket, "listObjects",
+    Prefix: prefix
+    Delimiter: delimiter
+  .then (result) ->
+    path: prefix.replace(id, "")
+    folders: result.CommonPrefixes.map (p) ->
+      p.Prefix.replace(prefix, "")
+    files: result.Contents.map (o) ->
+      o.Key.replace(prefix, "")
 
-  params =
-    AttributesToGet: [
-      "path"
-      "sha"
-    ]
-    KeyConditions:
-      owner:
-        ComparisonOperator: "EQ"
-        AttributeValueList: [S: id]
-
-  pinvoke table, "query", params
-
-readFromDynamoDB = (table, id, path) ->
-  params = 
-    Key:
-      owner: {S: id}
-      path: {S: path}
-
-  # Read the item from the table
-  pinvoke table, "getItem", params
-
-uploadFile = (table, bucket, id, file, path) ->
-  SHA file
-  .then (sha) ->
-    s3Key = "#{id}/#{sha}"
-
-    Promise.all([
-      uploadToS3(bucket, file, s3Key)
-      writeToDynamoDB(table, id, path, sha)
-    ])
-    .then ->
-      path: path
-      sha: sha
-
-module.exports = (id, table, bucket) ->
+module.exports = (id, bucket) ->
   get: (path) ->
-    readFromDynamoDB table, id, path
-    .then (data) ->
-      log data
+    unless startsWith path, delimiter
+      path = delimiter + path
+
+    key = "#{id}#{path}"
+    getFromS3(bucket, key)
   put: (path, file) ->
-    uploadFile table, bucket, id, file, path
-  query: ->
-    queryDynamoDB table, id
+    key = "#{id}/#{path}"
+    uploadToS3 bucket, key, file
+  list: (dir="/") ->
+    list bucket, id, dir

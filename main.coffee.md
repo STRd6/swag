@@ -15,6 +15,8 @@ Let's use AWS Cognito to be all serverless all the time!
        #}
     #});
 
+    {log} = require "./util"
+
     AWS.config.update
       region: 'us-east-1'
 
@@ -64,10 +66,17 @@ Let's use AWS Cognito to be all serverless all the time!
 
             id = AWS.config.credentials.identityId
 
-            fs = require('./fs')(id, table, bucket)
+            fs = require('./fs')(id, bucket)
 
-            file = new File ['yolo'], "file.txt", type: "text/plain"
+            -> 
+              file = new File ['yolo'], "file.txt", type: "text/plain"
+              ["Desktop/cool.txt", "Desktop/rad.txt", "Desktop/yolo.txt", "Desktop/duder.txt"].forEach (path) ->
+                fs.put path, file
 
-            fs.put "yolo.txt", file
+            fs.list()
+            .then log
+            .then ->
+              fs.list("Desktop")
+            .then log
 
       return false
