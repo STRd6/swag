@@ -73,29 +73,42 @@ Let's use AWS Cognito to be all serverless all the time!
 
             fs = require('./fs')(id, bucket)
 
-            -> 
-              file = new File ['yolo'], "file.txt", type: "text/plain"
+            file = new File ['yolo'], "file.txt", type: "text/plain"
+            # fs.put "Desktop/stuff/cool/wat.txt", file
+            ->
               ["Desktop/cool.txt", "Desktop/rad.txt", "Desktop/yolo.txt", "Desktop/duder.txt"].forEach (path) ->
                 fs.put path, file
 
-            Folder = require "./templates/folder"
+            FolderTemplate = require "./templates/folder"
+            FileTemplate = require "./templates/file"
+
+            FilePresenter = (data) ->
+              {name, path} = data
+              
+              name: name
+              path: path
+              click: (e) ->
+                e.filetreeHandled = true
+
+                return
 
             FolderPresenter = (data) ->
-              if typeof data is "string"
-                path = data
-              else
-                {path, folders, files} = data
+              {path, folders, files, name} = data
+              name ?= path
               folders ?= []
               files ?= []
 
               self =
                 Folder: (data) ->
-                  Folder FolderPresenter data
+                  FolderTemplate FolderPresenter data
+                File: (data) ->
+                  FileTemplate FilePresenter data
                 class: ->
                   "expanded" if self.expanded()
                 click: (e) ->
-                  console.log e
-                  e.stopPropagation()
+                  return if e.filetreeHandled
+                  e.filetreeHandled = true
+
                   self.expanded.toggle()
                   if self.expanded()
                     self.refresh()
@@ -104,6 +117,7 @@ Let's use AWS Cognito to be all serverless all the time!
                 expanded: Observable false
                 folders: Observable folders
                 files: Observable files
+                name: name
                 path: path
                 refresh: ->
                   console.log "List:", path
@@ -112,6 +126,6 @@ Let's use AWS Cognito to be all serverless all the time!
                     self.folders(folders)
 
 
-            document.body.appendChild Folder FolderPresenter "/"
+            document.body.appendChild FolderTemplate FolderPresenter path: "/"
 
       return false
