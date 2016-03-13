@@ -14,6 +14,12 @@ Let's use AWS Cognito to be all serverless all the time!
           #'cognito-identity.amazonaws.com': 'TOKEN_RETURNED_FROM_YOUR_PROVIDER'
        #}
     #});
+    
+    style = document.createElement "style"
+    style.innerHTML = require "./style" 
+    document.head.appendChild style
+
+    Observable = require "observable"
 
     {log} = require "./util"
 
@@ -62,7 +68,6 @@ Let's use AWS Cognito to be all serverless all the time!
 
           AWS.config.credentials.get (err) ->
             return console.error err if err
-            console.log AWS.config.credentials
 
             id = AWS.config.credentials.identityId
 
@@ -73,10 +78,40 @@ Let's use AWS Cognito to be all serverless all the time!
               ["Desktop/cool.txt", "Desktop/rad.txt", "Desktop/yolo.txt", "Desktop/duder.txt"].forEach (path) ->
                 fs.put path, file
 
-            fs.list()
-            .then log
-            .then ->
-              fs.list("Desktop")
-            .then log
+            Folder = require "./templates/folder"
+
+            FolderPresenter = (data) ->
+              if typeof data is "string"
+                path = data
+              else
+                {path, folders, files} = data
+              folders ?= []
+              files ?= []
+
+              self =
+                Folder: (data) ->
+                  Folder FolderPresenter data
+                class: ->
+                  "expanded" if self.expanded()
+                click: (e) ->
+                  console.log e
+                  e.stopPropagation()
+                  self.expanded.toggle()
+                  if self.expanded()
+                    self.refresh()
+
+                  return false
+                expanded: Observable false
+                folders: Observable folders
+                files: Observable files
+                path: path
+                refresh: ->
+                  console.log "List:", path
+                  fs.list(path).then ({files, folders}) ->
+                    self.files(files)
+                    self.folders(folders)
+
+
+            document.body.appendChild Folder FolderPresenter "/"
 
       return false

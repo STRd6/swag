@@ -21,6 +21,7 @@ list = (bucket, id, dir) ->
     dir = "#{delimiter}#{dir}"
 
   unless endsWith dir, delimiter
+    console.log "Appending / to ", dir
     dir = "#{dir}#{delimiter}"
   
   prefix = "#{id}#{dir}"

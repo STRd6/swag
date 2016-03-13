@@ -1,0 +1,18 @@
+folder
+  display: block
+
+  &::before
+    content: "[+]"
+
+  & > file, & > folder
+    display: none
+    padding-left: 1em
+
+  &.expanded
+    &::before
+      content: "[-]"
+
+    & > file
+      display: block
+    & > folder
+      display: block

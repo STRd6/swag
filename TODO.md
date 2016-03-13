@@ -11,6 +11,6 @@ Log out button
 
 Display Filetree
 
-Expand/collapse folders
+Expand/collapse folders - Test nested folders
 
 Embed pixel editor (load and save files)

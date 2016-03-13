@@ -17,4 +17,4 @@ module.exports =
     str.lastIndexOf(prefix, 0) is 0
 
   endsWith: (str, suffix) ->
-    str.indexOf(str, str.length - suffix.length) != -1
+    str.indexOf(suffix, str.length - suffix.length) != -1

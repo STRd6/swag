@@ -1,0 +1,9 @@
+- Folder = @Folder
+- File = @File
+
+folder(@click @class)
+  = @path
+  - @folders.forEach (folder) ->
+    = Folder folder
+  - @files.forEach (file) ->
+    file= file
