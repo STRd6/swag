@@ -1,6 +1,9 @@
 Whimsy FS
 =========
 
+Hmm... maybe just storing direct in S3 is better than having the DynamoDB
+indirection? Don't want to be too in love with content addressable stores :P
+
 DynamoDB Semantic Records linking to S3 Content Addressable Store
 
 DynamoDB Table
