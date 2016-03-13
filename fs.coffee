@@ -23,7 +23,7 @@ list = (bucket, id, dir) ->
   unless endsWith dir, delimiter
     console.log "Appending / to ", dir
     dir = "#{dir}#{delimiter}"
-  
+
   prefix = "#{id}#{dir}"
 
   pinvoke bucket, "listObjects",

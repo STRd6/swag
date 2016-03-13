@@ -14,12 +14,10 @@ Let's use AWS Cognito to be all serverless all the time!
           #'cognito-identity.amazonaws.com': 'TOKEN_RETURNED_FROM_YOUR_PROVIDER'
        #}
     #});
-    
-    style = document.createElement "style"
-    style.innerHTML = require "./style" 
-    document.head.appendChild style
 
-    Observable = require "observable"
+    style = document.createElement "style"
+    style.innerHTML = require "./style"
+    document.head.appendChild style
 
     {log} = require "./util"
 
@@ -80,52 +78,8 @@ Let's use AWS Cognito to be all serverless all the time!
                 fs.put path, file
 
             FolderTemplate = require "./templates/folder"
-            FileTemplate = require "./templates/file"
+            FolderPresenter = require "./presenters/folder"
 
-            FilePresenter = (data) ->
-              {name, path} = data
-              
-              name: name
-              path: path
-              click: (e) ->
-                e.filetreeHandled = true
-
-                return
-
-            FolderPresenter = (data) ->
-              {path, folders, files, name} = data
-              name ?= path
-              folders ?= []
-              files ?= []
-
-              self =
-                Folder: (data) ->
-                  FolderTemplate FolderPresenter data
-                File: (data) ->
-                  FileTemplate FilePresenter data
-                class: ->
-                  "expanded" if self.expanded()
-                click: (e) ->
-                  return if e.filetreeHandled
-                  e.filetreeHandled = true
-
-                  self.expanded.toggle()
-                  if self.expanded()
-                    self.refresh()
-
-                  return false
-                expanded: Observable false
-                folders: Observable folders
-                files: Observable files
-                name: name
-                path: path
-                refresh: ->
-                  console.log "List:", path
-                  fs.list(path).then ({files, folders}) ->
-                    self.files(files)
-                    self.folders(folders)
-
-
-            document.body.appendChild FolderTemplate FolderPresenter path: "/"
+            document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs
 
       return false

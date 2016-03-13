@@ -31,7 +31,7 @@ queryDynamoDB = (table, id) ->
   pinvoke table, "query", params
 
 readFromDynamoDB = (table, id, path) ->
-  params = 
+  params =
     Key:
       owner: {S: id}
       path: {S: path}

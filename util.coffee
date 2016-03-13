@@ -2,7 +2,7 @@ module.exports =
   log: (obj, rest...) ->
     console.log obj, rest...
     return obj
-  
+
   # TODO: Hook into progress where possible: .on 'httpUploadProgress'
   pinvoke: (object, method, params...) ->
     new Promise (resolve, reject) ->
@@ -10,7 +10,7 @@ module.exports =
         if err
           reject err
           return
-  
+
         resolve result
 
   startsWith: (str, prefix) ->
