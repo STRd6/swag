@@ -17,7 +17,7 @@
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
     <p>*S*W*A*G*</p>
-<p>Let&#39;s use AWS Cognitor to be all serverless all the time!</p>
+<p>Let&#39;s use AWS Cognito to be all serverless all the time!</p>
 
   </div>
   <div class="content"><pre><code class="lang-coffeescript">require <span class="string">"./aws"</span>
@@ -25,17 +25,31 @@
 require <span class="string">"./amazon_login"</span>
 document.body.appendChild require(<span class="string">"./templates/login"</span>)()
 
+<span class="function"><span class="title">queryUserInfo</span></span> = (token) -&gt;
+  fetch <span class="string">"https://api.amazon.com/user/profile"</span>,
+    headers:
+      Authorization: <span class="string">"bearer <span class="subst">#{token}</span>"</span>
+      Accept: <span class="string">"application/json"</span>
+  .<span class="keyword">then</span> (response) -&gt;
+    response.json()
+  .<span class="keyword">then</span> (json) -&gt;
+    console.log json
+  .<span class="keyword">catch</span> (e) -&gt;
+    console.error e
+
 document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span class="function"><span class="title">onclick</span></span> = -&gt;
   options = { scope : <span class="string">'profile'</span> }
   amazon.Login.authorize options, (resp) -&gt;
     <span class="keyword">if</span> !resp.error
-      <span class="keyword">debugger</span>
+      token = resp.access_token
       creds = AWS.config.credentials
 
       creds.params.Logins =
-        <span class="string">'www.amazon.com'</span>: resp.access_token
+        <span class="string">'www.amazon.com'</span>: token
 
       creds.expired = <span class="literal">true</span>
+
+      queryUserInfo(token)
 
       AWS.config.credentials.get (err) -&gt;
         <span class="keyword">return</span> console.error err <span class="keyword">if</span> err
