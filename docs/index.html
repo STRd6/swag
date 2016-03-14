@@ -33,6 +33,8 @@
    <span class="comment">#}</span>
 <span class="comment">#});</span>
 
+Observable = require <span class="string">"observable"</span>
+
 style = document.createElement <span class="string">"style"</span>
 style.innerHTML = require <span class="string">"./style"</span>
 document.head.appendChild style
@@ -95,6 +97,7 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
           [<span class="string">"Desktop/cool.txt"</span>, <span class="string">"Desktop/rad.txt"</span>, <span class="string">"Desktop/yolo.txt"</span>, <span class="string">"Desktop/duder.txt"</span>].forEach (path) -&gt;
             fs.put path, file
 
+        EditorTemplate = require <span class="string">"./templates/editor"</span>
         FolderTemplate = require <span class="string">"./templates/folder"</span>
         FolderPresenter = require <span class="string">"./presenters/folder"</span>
 
@@ -102,9 +105,28 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
           open: (path) -&gt;
             fs.get(path)
             .<span class="keyword">then</span> (result) -&gt;
-              console.log result
+              reader = <span class="keyword">new</span> FileReader
+
+              reader.<span class="function"><span class="title">onload</span></span> = -&gt;
+                editor.contents reader.result
+                editor.contentType result.type
+                editor.path path
+
+              reader.<span class="function"><span class="title">onerror</span></span> = (e) -&gt;
+                console.error e
+
+              reader.readAsText(result)
+
+        editor =
+          contents: Observable <span class="string">"Hello"</span>
+          contentType: Observable <span class="string">"text/plain"</span>
+          path: Observable <span class="string">"test.txt"</span>
+          save: -&gt;
+            blob = <span class="keyword">new</span> Blob [editor.contents()], type: editor.contentType()
+            fs.put editor.path(), blob
 
         document.body.appendChild FolderTemplate FolderPresenter {path: <span class="string">"/"</span>}, fs, os
+        document.body.appendChild EditorTemplate editor
 
   <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>
