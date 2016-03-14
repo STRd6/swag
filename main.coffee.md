@@ -80,6 +80,12 @@ Let's use AWS Cognito to be all serverless all the time!
             FolderTemplate = require "./templates/folder"
             FolderPresenter = require "./presenters/folder"
 
-            document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs
+            os =
+              open: (path) ->
+                fs.get(path)
+                .then (result) ->
+                  console.log result
+
+            document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs, os
 
       return false

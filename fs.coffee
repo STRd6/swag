@@ -1,5 +1,16 @@
 {log, pinvoke, startsWith, endsWith} = require "./util"
 
+delimiter = "/"
+
+status = (response) ->
+  if response.status >= 200 && response.status < 300
+    return response
+  else
+    throw response
+
+json = (response) ->
+  response.json()
+
 uploadToS3 = (bucket, key, file, options={}) ->
   {cacheControl} = options
 
@@ -13,10 +24,18 @@ uploadToS3 = (bucket, key, file, options={}) ->
 
 getFromS3 = (bucket, key) ->
   fetch("https://#{bucket.config.params.Bucket}.s3.amazonaws.com/#{key}")
+  .then status
+  .then (response) ->
+    contentType = response.headers.get('Content-Type')
+
+    if contentType.match /^text/
+      response.text()
+    else if contentType.match /json$/
+      response.json()
+    else
+      response.blob()
 
 list = (bucket, id, dir) ->
-  delimiter = "/"
-
   unless startsWith dir, delimiter
     dir = "#{delimiter}#{dir}"
 
