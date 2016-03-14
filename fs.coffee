@@ -58,7 +58,10 @@ module.exports = (id, bucket) ->
     key = "#{id}#{path}"
     getFromS3(bucket, key)
   put: (path, file) ->
-    key = "#{id}/#{path}"
+    unless startsWith path, delimiter
+      path = delimiter + path
+
+    key = "#{id}#{path}"
     uploadToS3 bucket, key, file
   list: (dir="/") ->
     list bucket, id, dir

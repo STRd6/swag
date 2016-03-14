@@ -1,0 +1,9 @@
+editor
+  label
+    span Path
+    input(value=@path)
+  label
+    span ContentType
+    input(value=@contentType)
+  textarea(value=@contents)
+  button(click=@save) Save

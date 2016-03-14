@@ -15,6 +15,8 @@ Let's use AWS Cognito to be all serverless all the time!
        #}
     #});
 
+    Observable = require "observable"
+
     style = document.createElement "style"
     style.innerHTML = require "./style"
     document.head.appendChild style
@@ -77,6 +79,7 @@ Let's use AWS Cognito to be all serverless all the time!
               ["Desktop/cool.txt", "Desktop/rad.txt", "Desktop/yolo.txt", "Desktop/duder.txt"].forEach (path) ->
                 fs.put path, file
 
+            EditorTemplate = require "./templates/editor"
             FolderTemplate = require "./templates/folder"
             FolderPresenter = require "./presenters/folder"
 
@@ -84,8 +87,27 @@ Let's use AWS Cognito to be all serverless all the time!
               open: (path) ->
                 fs.get(path)
                 .then (result) ->
-                  console.log result
+                  reader = new FileReader
+
+                  reader.onload = ->
+                    editor.contents reader.result
+                    editor.contentType result.type
+                    editor.path path
+
+                  reader.onerror = (e) ->
+                    console.error e
+
+                  reader.readAsText(result)
+
+            editor =
+              contents: Observable "Hello"
+              contentType: Observable "text/plain"
+              path: Observable "test.txt"
+              save: ->
+                blob = new Blob [editor.contents()], type: editor.contentType()
+                fs.put editor.path(), blob
 
             document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs, os
+            document.body.appendChild EditorTemplate editor
 
       return false
