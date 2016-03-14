@@ -241,7 +241,7 @@
     },
     "style.styl": {
       "path": "style.styl",
-      "content": "folder\n  display: block\n\n  &::before\n    content: \"[+]\"\n\n  & > file, & > folder\n    display: none\n    padding-left: 1em\n\n  &.expanded\n    &::before\n      content: \"[-]\"\n\n    & > file\n      display: block\n    & > folder\n      display: block\n\ntextarea\n  display: block\n",
+      "content": "*\n  box-sizing: border-box\n\nfolder\n  display: block\n\n  &::before\n    content: \"[+]\"\n\n  & > file, & > folder\n    display: none\n    padding-left: 1em\n\n  &.expanded\n    &::before\n      content: \"[-]\"\n\n    & > file\n      display: block\n    & > folder\n      display: block\n\neditor\n  display: block\n  margin-top: 1em\n\ntextarea\n  display: block\n  width: 100%\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -324,7 +324,7 @@
     },
     "style": {
       "path": "style",
-      "content": "module.exports = \"folder {\\n  display: block;\\n}\\nfolder::before {\\n  content: \\\"[+]\\\";\\n}\\nfolder > file,\\nfolder > folder {\\n  display: none;\\n  padding-left: 1em;\\n}\\nfolder.expanded::before {\\n  content: \\\"[-]\\\";\\n}\\nfolder.expanded > file {\\n  display: block;\\n}\\nfolder.expanded > folder {\\n  display: block;\\n}\\ntextarea {\\n  display: block;\\n}\\n\";",
+      "content": "module.exports = \"* {\\n  box-sizing: border-box;\\n}\\nfolder {\\n  display: block;\\n}\\nfolder::before {\\n  content: \\\"[+]\\\";\\n}\\nfolder > file,\\nfolder > folder {\\n  display: none;\\n  padding-left: 1em;\\n}\\nfolder.expanded::before {\\n  content: \\\"[-]\\\";\\n}\\nfolder.expanded > file {\\n  display: block;\\n}\\nfolder.expanded > folder {\\n  display: block;\\n}\\neditor {\\n  display: block;\\n  margin-top: 1em;\\n}\\ntextarea {\\n  display: block;\\n  width: 100%;\\n}\\n\";",
       "type": "blob"
     },
     "templates/file": {
