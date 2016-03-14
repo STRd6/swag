@@ -98,7 +98,13 @@ document.getElementById(<span class="string">'LoginWithAmazon'</span>).<span cla
         FolderTemplate = require <span class="string">"./templates/folder"</span>
         FolderPresenter = require <span class="string">"./presenters/folder"</span>
 
-        document.body.appendChild FolderTemplate FolderPresenter {path: <span class="string">"/"</span>}, fs
+        os =
+          open: (path) -&gt;
+            fs.get(path)
+            .<span class="keyword">then</span> (result) -&gt;
+              console.log result
+
+        document.body.appendChild FolderTemplate FolderPresenter {path: <span class="string">"/"</span>}, fs, os
 
   <span class="keyword">return</span> <span class="literal">false</span></code></pre>
 </div>
