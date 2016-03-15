@@ -1,33 +1,9 @@
-Whimsy FS
-=========
+\*S\*W\*A\*G\*
+==============
 
-Hmm... maybe just storing direct in S3 is better than having the DynamoDB
-indirection? Don't want to be too in love with content addressable stores :P
+Let's use AWS Cognito to be all serverless all the time!
 
-DynamoDB Semantic Records linking to S3 Content Addressable Store
-
-DynamoDB Table
-
-      Primary keys     Index    Link to CAS
-        |       |        |           |
-    +-------+------+-----------+----------+------------------------
-    | owner | path | createdAt |    sha   |  extra... (tags, etc.)
-
-
-Saving a File
--------------
-
-sha is base64 url-encoded sha256 of file contents
-
-Compute sha, save to S3 and DynamoDB
-
-S3 path is "${cognito-identity.amazonaws.com:sub}/#{sha}"
-
-DynamoDB path is logical path ex: /Desktop/yolo.png
-owner is "${cognito-identity.amazonaws.com:sub}"
-createdAt number: unix epoch timestamp
-sha is the same sha that matches s3
-arbitrary extra meta data can be added
+Use S3 as a filesystem.
 
 urls can be constructed by
 
@@ -155,3 +131,33 @@ hideous yet functional.
 Update Cognito Identity Pool with Amazon App Id
 
 Optionally add Twitter, Goog, FB, etc.
+
+
+Discontinued Tangents
+=====================
+
+DynamoDB Semantic Records linking to S3 Content Addressable Store
+
+DynamoDB Table
+
+      Primary keys     Index    Link to CAS
+        |       |        |           |
+    +-------+------+-----------+----------+------------------------
+    | owner | path | createdAt |    sha   |  extra... (tags, etc.)
+
+
+Saving a File
+-------------
+
+sha is base64 url-encoded sha256 of file contents
+
+Compute sha, save to S3 and DynamoDB
+
+S3 path is "${cognito-identity.amazonaws.com:sub}/#{sha}"
+
+DynamoDB path is logical path ex: /Desktop/yolo.png
+owner is "${cognito-identity.amazonaws.com:sub}"
+createdAt number: unix epoch timestamp
+sha is the same sha that matches s3
+arbitrary extra meta data can be added
+
