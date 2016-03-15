@@ -15,7 +15,6 @@
 
 require "./lib/directory_upload"
 
-Observable = require "observable"
 
 style = document.createElement "style"
 style.innerHTML = require "./style"
@@ -25,7 +24,11 @@ document.head.appendChild style
 
 Drop = require("./lib/drop")
 
-TextEditor = require "./text_editor"
+OS = require "./os"
+os = OS()
+
+OSTemplate = require "./templates/os"
+document.body.appendChild OSTemplate os
 
 initFileDrop = (element, processItem) ->
   Drop element, (e) ->
@@ -39,6 +42,9 @@ initFileDrop = (element, processItem) ->
           processItem item, path
     e.dataTransfer.getFilesAndDirectories().then (items) ->
       handleFiles(items)
+
+initFileDrop document, (file, path) ->
+  os.put "#{path}/#{file.name}", file
 
 AWS.config.update
   region: 'us-east-1'
@@ -55,7 +61,28 @@ bucket = new AWS.S3
     Bucket: "whimsy-fs"
 
 require "./amazon_login"
-document.body.appendChild require("./templates/login")()
+document.body.appendChild require("./templates/login")
+  click: ->
+    options = { scope : 'profile' }
+    amazon.Login.authorize options, (resp) ->
+      if !resp.error
+        token = resp.access_token
+        creds = AWS.config.credentials
+
+        creds.params.Logins =
+          'www.amazon.com': token
+
+        creds.expired = true
+
+        queryUserInfo(token)
+
+        pinvoke AWS.config.credentials, "get"
+        .then ->
+          id = AWS.config.credentials.identityId
+
+          fs = require('./fs')(id, bucket)
+
+          os.attachFS fs
 
 queryUserInfo = (token) ->
   fetch "https://api.amazon.com/user/profile",
@@ -69,80 +96,3 @@ queryUserInfo = (token) ->
   .catch (e) ->
     console.error e
 
-document.getElementById('LoginWithAmazon').onclick = ->
-  options = { scope : 'profile' }
-  amazon.Login.authorize options, (resp) ->
-    if !resp.error
-      token = resp.access_token
-      creds = AWS.config.credentials
-
-      creds.params.Logins =
-        'www.amazon.com': token
-
-      creds.expired = true
-
-      queryUserInfo(token)
-
-      pinvoke AWS.config.credentials, "get"
-      .then ->
-        id = AWS.config.credentials.identityId
-
-        fs = require('./fs')(id, bucket)
-
-        EditorTemplate = require "./templates/editor"
-        FolderTemplate = require "./templates/folder"
-        FolderPresenter = require "./presenters/folder"
-
-        appHandlers =
-          "^text": (file, path) ->
-            editor = TextEditor(fs)
-
-            reader = new FileReader
-
-            reader.onload = ->
-              editor.contents reader.result
-              editor.contentType result.type
-              editor.path path
-
-            reader.onerror = (e) ->
-              console.error e
-
-            reader.readAsText(file)
-
-            return EditorTemplate editor
-
-          "^image": (file) ->
-            img = document.createElement "img"
-            img.src = URL.createObjectURL(file)
-
-            return img
-
-        os =
-          open: (path) ->
-            fs.get(path)
-            .then (file) ->
-              console.log file
-              type = file.type
-              handled = false
-              Object.keys(appHandlers).forEach (matcher) ->
-                return if handled
-
-                handler = appHandlers[matcher]
-                regex = new RegExp(matcher)
-
-                if regex.test(type)
-                  handled = true
-                  appElement = handler(file, path)
-                  
-                  emptyElement appDiv
-                  appDiv.appendChild appElement
-
-        document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs, os
-
-        appDiv = document.createElement 'div'
-        document.body.appendChild appDiv
-
-        initFileDrop document, (file, path) ->
-          fs.put "#{path}/#{file.name}", file
-
-  return false
