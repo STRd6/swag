@@ -21,7 +21,7 @@ style = document.createElement "style"
 style.innerHTML = require "./style"
 document.head.appendChild style
 
-{log, emptyElement} = require "./util"
+{log, emptyElement, pinvoke} = require "./util"
 
 Drop = require("./lib/drop")
 
@@ -83,18 +83,11 @@ document.getElementById('LoginWithAmazon').onclick = ->
 
       queryUserInfo(token)
 
-      AWS.config.credentials.get (err) ->
-        return console.error err if err
-
+      pinvoke AWS.config.credentials, "get"
+      .then ->
         id = AWS.config.credentials.identityId
 
         fs = require('./fs')(id, bucket)
-
-        file = new File ['yolo'], "file.txt", type: "text/plain"
-        # fs.put "Desktop/stuff/cool/wat.txt", file
-        ->
-          ["Desktop/cool.txt", "Desktop/rad.txt", "Desktop/yolo.txt", "Desktop/duder.txt"].forEach (path) ->
-            fs.put path, file
 
         EditorTemplate = require "./templates/editor"
         FolderTemplate = require "./templates/folder"
