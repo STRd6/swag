@@ -16,7 +16,7 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
-    <h1 id="whimsy-fs">Whimsy FS</h1>
+    <h1 id="-s-w-a-g-">*S*W*A*G*</h1>
 
   </div>
   <div class="content"><pre><code>
@@ -28,16 +28,14 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-2">&#182;</a>
     </div>
-    <p>Hmm... maybe just storing direct in S3 is better than having the DynamoDB
-indirection? Don&#39;t want to be too in love with content addressable stores :P</p>
-<p>DynamoDB Semantic Records linking to S3 Content Addressable Store</p>
-<p>DynamoDB Table</p>
+    <p>Let&#39;s use AWS Cognito to be all serverless all the time!</p>
+<p>Use S3 as a filesystem.</p>
+<p>urls can be constructed by</p>
 
   </div>
-  <div class="content"><pre><code>  Primary keys     Index    Link to CAS
-    |       |        |           |
-+-------+------+-----------+----------+------------------------
-| owner | path | createdAt |    sha   |  extra... (tags, etc.)</code></pre>
+  <div class="content"><pre><code>   https://s3.amazonaws.com/#{bucket}/#{userId}/#{sha}
+-&gt; https://#{base_cdn}/#{userId}/#{sha}
+   https://#{user_cdn}/#{sha}</code></pre>
 </div>
 </li>
 <li id="section-3">
@@ -45,7 +43,7 @@ indirection? Don&#39;t want to be too in love with content addressable stores :P
     <div class="pilwrap">
       <a class="pilcrow" href="#section-3">&#182;</a>
     </div>
-    <h2 id="saving-a-file">Saving a File</h2>
+    <h2 id="s3-bucket-config">S3 Bucket Config</h2>
 
   </div>
   <div class="content"><pre><code>
@@ -56,39 +54,6 @@ indirection? Don&#39;t want to be too in love with content addressable stores :P
   <div class="annotation">
     <div class="pilwrap">
       <a class="pilcrow" href="#section-4">&#182;</a>
-    </div>
-    <p>sha is base64 url-encoded sha256 of file contents</p>
-<p>Compute sha, save to S3 and DynamoDB</p>
-<p>S3 path is &quot;${cognito-identity.amazonaws.com:sub}/#{sha}&quot;</p>
-<p>DynamoDB path is logical path ex: /Desktop/yolo.png
-owner is &quot;${cognito-identity.amazonaws.com:sub}&quot;
-createdAt number: unix epoch timestamp
-sha is the same sha that matches s3
-arbitrary extra meta data can be added</p>
-<p>urls can be constructed by</p>
-
-  </div>
-  <div class="content"><pre><code>   https://s3.amazonaws.com/#{bucket}/#{userId}/#{sha}
--&gt; https://#{base_cdn}/#{userId}/#{sha}
-   https://#{user_cdn}/#{sha}</code></pre>
-</div>
-</li>
-<li id="section-5">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-5">&#182;</a>
-    </div>
-    <h2 id="s3-bucket-config">S3 Bucket Config</h2>
-
-  </div>
-  <div class="content"><pre><code>
-</code></pre>
-</div>
-</li>
-<li id="section-6">
-  <div class="annotation">
-    <div class="pilwrap">
-      <a class="pilcrow" href="#section-6">&#182;</a>
     </div>
     <p>You need to set up CORS on the S3 Bucket to allow posting from the browser</p>
 
@@ -105,10 +70,10 @@ arbitrary extra meta data can be added</p>
 &lt;/CORSConfiguration&gt;</code></pre>
 </div>
 </li>
-<li id="section-7">
+<li id="section-5">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-7">&#182;</a>
+      <a class="pilcrow" href="#section-5">&#182;</a>
     </div>
     <p>Set up public read policy on S3 Bucket</p>
 
@@ -130,10 +95,10 @@ arbitrary extra meta data can be added</p>
 }</code></pre>
 </div>
 </li>
-<li id="section-8">
+<li id="section-6">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-8">&#182;</a>
+      <a class="pilcrow" href="#section-6">&#182;</a>
     </div>
     <h2 id="cloudfront-config">Cloudfront Config</h2>
 
@@ -142,10 +107,10 @@ arbitrary extra meta data can be added</p>
 </code></pre>
 </div>
 </li>
-<li id="section-9">
+<li id="section-7">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-9">&#182;</a>
+      <a class="pilcrow" href="#section-7">&#182;</a>
     </div>
     <p>https only</p>
 <p>Point at S3 bucket</p>
@@ -157,10 +122,10 @@ arbitrary extra meta data can be added</p>
 </code></pre>
 </div>
 </li>
-<li id="section-10">
+<li id="section-8">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-10">&#182;</a>
+      <a class="pilcrow" href="#section-8">&#182;</a>
     </div>
     <p>fs.whimsy.space</p>
 <p>Create A (Alias record) pointing to cloudfront distribution</p>
@@ -171,10 +136,10 @@ arbitrary extra meta data can be added</p>
 </code></pre>
 </div>
 </li>
-<li id="section-11">
+<li id="section-9">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-11">&#182;</a>
+      <a class="pilcrow" href="#section-9">&#182;</a>
     </div>
     
   </div>
@@ -233,10 +198,10 @@ arbitrary extra meta data can be added</p>
 }</code></pre>
 </div>
 </li>
-<li id="section-12">
+<li id="section-10">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-12">&#182;</a>
+      <a class="pilcrow" href="#section-10">&#182;</a>
     </div>
     <h2 id="using-amazon-login-for-auth">Using Amazon Login for Auth</h2>
 
@@ -245,16 +210,63 @@ arbitrary extra meta data can be added</p>
 </code></pre>
 </div>
 </li>
-<li id="section-13">
+<li id="section-11">
   <div class="annotation">
     <div class="pilwrap">
-      <a class="pilcrow" href="#section-13">&#182;</a>
+      <a class="pilcrow" href="#section-11">&#182;</a>
     </div>
     <p>Could also instead use FB, Google, pretty much any OAuth</p>
 <p>Set up app at <a href="https://sellercentral.amazon.com/gp/homepage.html">https://sellercentral.amazon.com/gp/homepage.html</a> the interface is
 hideous yet functional.</p>
 <p>Update Cognito Identity Pool with Amazon App Id</p>
 <p>Optionally add Twitter, Goog, FB, etc.</p>
+<h1 id="discontinued-tangents">Discontinued Tangents</h1>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-12">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-12">&#182;</a>
+    </div>
+    <p>DynamoDB Semantic Records linking to S3 Content Addressable Store</p>
+<p>DynamoDB Table</p>
+
+  </div>
+  <div class="content"><pre><code>  Primary keys     Index    Link to CAS
+    |       |        |           |
++-------+------+-----------+----------+------------------------
+| owner | path | createdAt |    sha   |  extra... (tags, etc.)</code></pre>
+</div>
+</li>
+<li id="section-13">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-13">&#182;</a>
+    </div>
+    <h2 id="saving-a-file">Saving a File</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-14">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-14">&#182;</a>
+    </div>
+    <p>sha is base64 url-encoded sha256 of file contents</p>
+<p>Compute sha, save to S3 and DynamoDB</p>
+<p>S3 path is &quot;${cognito-identity.amazonaws.com:sub}/#{sha}&quot;</p>
+<p>DynamoDB path is logical path ex: /Desktop/yolo.png
+owner is &quot;${cognito-identity.amazonaws.com:sub}&quot;
+createdAt number: unix epoch timestamp
+sha is the same sha that matches s3
+arbitrary extra meta data can be added</p>
 
   </div>
   <div class="content"><pre><code>
