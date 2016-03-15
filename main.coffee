@@ -13,6 +13,8 @@
    #}
 #});
 
+require "./lib/directory_upload"
+
 Observable = require "observable"
 
 style = document.createElement "style"
@@ -23,12 +25,18 @@ document.head.appendChild style
 
 Drop = require("./lib/drop")
 Drop document, (e) ->
-  console.log e
-  Array::forEach.call e.dataTransfer.items, (item) ->
-    debugger
-    entry = item.getAsEntry?() or item.webkitGetAsEntry?()
+  processItem = (item, path) ->
+    console.log item, path
 
-    console.log entry
+  handleFiles = (items, path="/") ->
+    items.forEach (item) ->
+      if item.getFilesAndDirectories
+        item.getFilesAndDirectories().then (items) ->
+          handleFiles(items, item.path)
+      else
+        processItem item, path
+  e.dataTransfer.getFilesAndDirectories().then (items) ->
+    handleFiles(items)
 
 AWS.config.update
   region: 'us-east-1'
