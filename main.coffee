@@ -46,19 +46,35 @@ initFileDrop = (element, processItem) ->
 initFileDrop document, (file, path) ->
   os.put "#{path}/#{file.name}", file
 
+receivedCredentials = ->
+  console.log AWS.config.credentials
+  id = AWS.config.credentials.identityId
+
+  document.body.removeChild document.querySelector('#LoginWithAmazon')
+
+  bucket = new AWS.S3
+    params:
+      Bucket: "whimsy-fs"
+
+  fs = require('./fs')(id, bucket)
+
+  os.attachFS fs
+
 AWS.config.update
   region: 'us-east-1'
 
+try
+  logins = JSON.parse localStorage.WHIMSY_FS_AWS_LOGIN
+
 AWS.config.credentials = new AWS.CognitoIdentityCredentials
   IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
+  Logins: logins
 
-table = new AWS.DynamoDB
-  params:
-    TableName: 'whimsy-fs'
-
-bucket = new AWS.S3
-  params:
-    Bucket: "whimsy-fs"
+if logins
+  pinvoke AWS.config.credentials, "get"
+  .then receivedCredentials
+  .catch (e) ->
+    console.error e
 
 require "./amazon_login"
 document.body.appendChild require("./templates/login")
@@ -66,23 +82,22 @@ document.body.appendChild require("./templates/login")
     options = { scope : 'profile' }
     amazon.Login.authorize options, (resp) ->
       if !resp.error
+        console.log resp
         token = resp.access_token
         creds = AWS.config.credentials
 
-        creds.params.Logins =
+        logins =
           'www.amazon.com': token
+        localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
+
+        creds.params.Logins = logins
 
         creds.expired = true
 
         queryUserInfo(token)
 
         pinvoke AWS.config.credentials, "get"
-        .then ->
-          id = AWS.config.credentials.identityId
-
-          fs = require('./fs')(id, bucket)
-
-          os.attachFS fs
+        .then receivedCredentials
 
 queryUserInfo = (token) ->
   fetch "https://api.amazon.com/user/profile",
