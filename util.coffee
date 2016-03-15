@@ -18,3 +18,7 @@ module.exports =
 
   endsWith: (str, suffix) ->
     str.indexOf(suffix, str.length - suffix.length) != -1
+
+  emptyElement: (element) ->
+    while element.lastChild
+      element.lastChild.remove()

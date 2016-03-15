@@ -24,19 +24,19 @@ document.head.appendChild style
 {log} = require "./util"
 
 Drop = require("./lib/drop")
-Drop document, (e) ->
-  processItem = (item, path) ->
-    console.log item, path
 
-  handleFiles = (items, path="/") ->
-    items.forEach (item) ->
-      if item.getFilesAndDirectories
-        item.getFilesAndDirectories().then (items) ->
-          handleFiles(items, item.path)
-      else
-        processItem item, path
-  e.dataTransfer.getFilesAndDirectories().then (items) ->
-    handleFiles(items)
+initFileDrop = (element, processItem) ->
+  Drop element, (e) ->
+  
+    handleFiles = (items, path="/") ->
+      items.forEach (item) ->
+        if item.getFilesAndDirectories
+          item.getFilesAndDirectories().then (items) ->
+            handleFiles(items, item.path)
+        else
+          processItem item, path
+    e.dataTransfer.getFilesAndDirectories().then (items) ->
+      handleFiles(items)
 
 AWS.config.update
   region: 'us-east-1'
@@ -98,31 +98,52 @@ document.getElementById('LoginWithAmazon').onclick = ->
         FolderTemplate = require "./templates/folder"
         FolderPresenter = require "./presenters/folder"
 
+        appHandlers =
+          "^text": (file, path) ->
+            editor = TextEditor(fs)
+
+            reader = new FileReader
+
+            reader.onload = ->
+              editor.contents reader.result
+              editor.contentType result.type
+              editor.path path
+
+            reader.onerror = (e) ->
+              console.error e
+
+            reader.readAsText(result)
+
+            return EditorTemplate editor
+
+          "^image": (file) ->
+            img = document.createElement "img"
+            img.src = URL.createObjectURL(file)
+
+            return img
+
         os =
           open: (path) ->
             fs.get(path)
-            .then (result) ->
-              reader = new FileReader
+            .then (file) ->
+              console.log file
+              type = file.type
+              handled = false
+              Object.keys(appHandlers).forEach (matcher) ->
+                return if handled
 
-              reader.onload = ->
-                editor.contents reader.result
-                editor.contentType result.type
-                editor.path path
-
-              reader.onerror = (e) ->
-                console.error e
-
-              reader.readAsText(result)
-
-        editor =
-          contents: Observable "Hello"
-          contentType: Observable "text/plain"
-          path: Observable "test.txt"
-          save: ->
-            blob = new Blob [editor.contents()], type: editor.contentType()
-            fs.put editor.path(), blob
+                handler = appHandlers[matcher]
+                regex = new RegExp(matcher)
+                debugger
+                if regex.test(type)
+                  handled = true
+                  appElement = handler(file, path)
+                  
+                  document.body.appendChild appElement
 
         document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs, os
-        document.body.appendChild EditorTemplate editor
+
+        initFileDrop document, (file, path) ->
+          fs.put "#{path}/#{file.name}", file
 
   return false
