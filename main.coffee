@@ -21,9 +21,11 @@ style = document.createElement "style"
 style.innerHTML = require "./style"
 document.head.appendChild style
 
-{log} = require "./util"
+{log, emptyElement} = require "./util"
 
 Drop = require("./lib/drop")
+
+TextEditor = require "./text_editor"
 
 initFileDrop = (element, processItem) ->
   Drop element, (e) ->
@@ -112,7 +114,7 @@ document.getElementById('LoginWithAmazon').onclick = ->
             reader.onerror = (e) ->
               console.error e
 
-            reader.readAsText(result)
+            reader.readAsText(file)
 
             return EditorTemplate editor
 
@@ -134,14 +136,18 @@ document.getElementById('LoginWithAmazon').onclick = ->
 
                 handler = appHandlers[matcher]
                 regex = new RegExp(matcher)
-                debugger
+
                 if regex.test(type)
                   handled = true
                   appElement = handler(file, path)
                   
-                  document.body.appendChild appElement
+                  emptyElement appDiv
+                  appDiv.appendChild appElement
 
         document.body.appendChild FolderTemplate FolderPresenter {path: "/"}, fs, os
+
+        appDiv = document.createElement 'div'
+        document.body.appendChild appDiv
 
         initFileDrop document, (file, path) ->
           fs.put "#{path}/#{file.name}", file

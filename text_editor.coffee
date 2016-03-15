@@ -1,3 +1,5 @@
+Observable = require "observable"
+
 module.exports = (fs) ->
   self =
     contents: Observable "Hello"

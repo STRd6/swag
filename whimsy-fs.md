@@ -11,6 +11,8 @@ urls can be constructed by
     -> https://#{base_cdn}/#{userId}/#{sha}
        https://#{user_cdn}/#{sha}
 
+Pricing: https://aws.amazon.com/s3/pricing/
+
 S3 Bucket Config
 ----------------
 
