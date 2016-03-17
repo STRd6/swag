@@ -1,4 +1,4 @@
-module.exports = FilePresenter = (data, fs, os) ->
+module.exports = FilePresenter = (data, fs, os, fp) ->
   {name, path} = data
 
   name: name
@@ -16,5 +16,7 @@ module.exports = FilePresenter = (data, fs, os) ->
     e.filetreeHandled = true
 
     os.delete path
+
+    # TODO: fp.folders.remove name
 
     return

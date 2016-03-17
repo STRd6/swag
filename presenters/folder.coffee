@@ -15,7 +15,7 @@ module.exports = FolderPresenter = (data, fs, os) ->
     Folder: (data) ->
       FolderTemplate FolderPresenter data, fs, os
     File: (data) ->
-      FileTemplate FilePresenter data, fs, os
+      FileTemplate FilePresenter data, fs, os, self
     class: ->
       "expanded" if self.expanded()
     click: (e) ->

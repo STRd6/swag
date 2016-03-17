@@ -1,8 +1,6 @@
 TODO
 ====
 
-Maintain identity id from unauth -> auth user
-
 Observe and display auth status (user name/email)
 
 Handle auth refresh when credentials expire
@@ -15,6 +13,8 @@ TOLater
 -------
 
 Log out button
+
+Maintain identity id from unauth -> auth user
 
 
 Done
