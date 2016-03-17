@@ -1,10 +1,10 @@
 Observable = require "observable"
 
-module.exports = (fs) ->
+module.exports = (os) ->
   self =
     contents: Observable "Hello"
     contentType: Observable "text/plain"
     path: Observable "test.txt"
     save: ->
       blob = new Blob [self.contents()], type: self.contentType()
-      fs.put self.path(), blob
+      os.put self.path(), blob

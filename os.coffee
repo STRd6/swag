@@ -10,7 +10,7 @@ FolderPresenter = require "./presenters/folder"
 module.exports = ->
   appHandlers =
     "^text": (file, path) ->
-      editor = TextEditor(fs)
+      editor = TextEditor(self)
   
       reader = new FileReader
   

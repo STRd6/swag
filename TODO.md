@@ -1,8 +1,6 @@
 TODO
 ====
 
-Auto-login
-
 Maintain identity id from unauth -> auth user
 
 Observe and display auth status (user name/email)
@@ -15,6 +13,8 @@ Embed pixel editor (load and save files)
 
 Done
 ----
+
+Auto-login
 
 Display Filetree
 
