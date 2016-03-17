@@ -17,6 +17,6 @@ module.exports = FilePresenter = (data, fs, os, fp) ->
 
     os.delete path
 
-    # TODO: fp.folders.remove name
+    fp.files.remove name
 
     return
