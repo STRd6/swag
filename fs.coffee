@@ -30,6 +30,10 @@ getFromS3 = (bucket, key) ->
   .then status
   .then blob
 
+deleteFromS3 = (bucket, key) ->
+  pinvoke bucket, "deleteObject",
+    Key: key
+
 list = (bucket, id, dir) ->
   unless startsWith dir, delimiter
     dir = "#{delimiter}#{dir}"
@@ -55,12 +59,24 @@ module.exports = (id, bucket) ->
       path = delimiter + path
 
     key = "#{id}#{path}"
+
     getFromS3(bucket, key)
+
   put: (path, file) ->
     unless startsWith path, delimiter
       path = delimiter + path
 
     key = "#{id}#{path}"
+
     uploadToS3 bucket, key, file
+
+  delete: (path) ->
+    unless startsWith path, delimiter
+      path = delimiter + path
+
+    key = "#{id}#{path}"
+
+    deleteFromS3 bucket, key
+
   list: (dir="/") ->
     list bucket, id, dir

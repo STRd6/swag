@@ -32,7 +32,7 @@ document.body.appendChild OSTemplate os
 
 initFileDrop = (element, processItem) ->
   Drop element, (e) ->
-  
+
     handleFiles = (items, path="/") ->
       items.forEach (item) ->
         if item.getFilesAndDirectories

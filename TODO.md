@@ -7,9 +7,15 @@ Observe and display auth status (user name/email)
 
 Handle auth refresh when credentials expire
 
-Log out button
+Delete File
 
 Embed pixel editor (load and save files)
+
+TOLater
+-------
+
+Log out button
+
 
 Done
 ----

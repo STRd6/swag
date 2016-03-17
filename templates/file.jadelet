@@ -1,1 +1,3 @@
-file(@click)= @name
+file(@click)
+  .path= @name
+  .delete(click=@remove) X
