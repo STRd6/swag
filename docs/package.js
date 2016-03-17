@@ -199,7 +199,7 @@
     },
     "TODO.md": {
       "path": "TODO.md",
-      "content": "TODO\n====\n\nObserve and display auth status (user name/email)\n\nHandle auth refresh when credentials expire\n\nDelete File\n\nEmbed pixel editor (load and save files)\n\nTOLater\n-------\n\nLog out button\n\nMaintain identity id from unauth -> auth user\n\n\nDone\n----\n\nAuto-login\n\nDisplay Filetree\n\nExpand/collapse folders\n",
+      "content": "TODO\n====\n\nObserve and display auth status (user name/email)\n\nHandle auth refresh when credentials expire\n\nEmbed pixel editor (load and save files)\n\nTOLater\n-------\n\nLog out button\n\nMaintain identity id from unauth -> auth user\n\n\nDone\n----\n\nDelete File\n\nAuto-login\n\nDisplay Filetree\n\nExpand/collapse folders\n",
       "mode": "100644",
       "type": "blob"
     },
