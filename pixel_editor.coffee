@@ -2,9 +2,7 @@ Postmaster = require "postmaster"
 
 module.exports = (os, file, path) ->
   frame = document.createElement "iframe"
-  frame.sandbox = "allow-scripts allow-popups"
-
-  # TODO: Save
+  frame.sandbox = "allow-scripts allow-modals"
 
   postmaster = Postmaster {},
     remoteTarget: -> frame.contentWindow
@@ -15,6 +13,12 @@ module.exports = (os, file, path) ->
         postmaster.invokeRemote "insertImageData", data
         .catch (e) ->
           console.error e
+    save: ({image}) ->
+      newPath = prompt "Save As", path
+
+      if newPath
+        path = newPath
+        os.put path, image
 
   frame.src = "https://danielx.net/pixel-editor/embedded/"
 
