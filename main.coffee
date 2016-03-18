@@ -15,7 +15,6 @@
 
 require "./lib/directory_upload"
 
-
 style = document.createElement "style"
 style.innerHTML = require "./style"
 document.head.appendChild style
@@ -44,7 +43,9 @@ initFileDrop = (element, processItem) ->
       handleFiles(items)
 
 initFileDrop document, (file, path) ->
-  os.put "#{path}/#{file.name}", file
+  # TODO: Why is this getting double slashes on single files?
+  key = "#{path}/#{file.name}".replace(/\/+/, "/")
+  os.put key, file
 
 receivedCredentials = ->
   console.log AWS.config.credentials

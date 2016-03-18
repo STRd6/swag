@@ -2,6 +2,7 @@
 Observable = require "observable"
 
 TextEditor = require "./text_editor"
+PixelEditor = require "./pixel_editor"
 
 EditorTemplate = require "./templates/editor"
 FolderTemplate = require "./templates/folder"
@@ -26,11 +27,11 @@ module.exports = ->
 
       return EditorTemplate editor
 
-    "^image": (file) ->
-      img = document.createElement "img"
-      img.src = URL.createObjectURL(file)
+    "^image": (file, path) ->
+      # img = document.createElement "img"
+      # img.src = URL.createObjectURL(file)
 
-      return img
+      return PixelEditor(self, file, path)
 
   self =
     editorElement: Observable()

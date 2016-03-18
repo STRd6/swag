@@ -3,3 +3,6 @@ remoteDependencies: [
 ]
 dependencies:
   observable: "distri/observable:master"
+  postmaster: "distri/postmaster:master"
+width: 1024
+height: 720
