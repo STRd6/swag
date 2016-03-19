@@ -325,7 +325,7 @@
     },
     "pixel_editor.coffee": {
       "path": "pixel_editor.coffee",
-      "content": "Postmaster = require \"postmaster\"\n\nmodule.exports = (os, file, path) ->\n  frame = document.createElement \"iframe\"\n  frame.sandbox = \"allow-scripts allow-modals\"\n\n  postmaster = Postmaster {},\n    remoteTarget: -> frame.contentWindow\n\n    childLoaded: ->\n      postmaster.invokeRemote \"fromBlob\", file\n      frame.contentWindow.focus()\n\n      return\n\n    save: ({image}) ->\n      newPath = prompt \"Save As\", path\n\n      if newPath\n        path = newPath\n        os.put path, image\n\n      return\n\n  frame.src = \"https://danielx.net/pixel-editor/embedded/\"\n\n  frame\n",
+      "content": "Postmaster = require \"postmaster\"\n\nmodule.exports = (os, file, path) ->\n  frame = document.createElement \"iframe\"\n  frame.sandbox = \"allow-scripts allow-modals\"\n\n  postmaster = Postmaster {},\n    remoteTarget: -> frame.contentWindow\n\n    childLoaded: ->\n      postmaster.invokeRemote \"loadFile\", file\n      frame.contentWindow.focus()\n\n      return\n\n    save: ({image}) ->\n      newPath = prompt \"Save As\", path\n\n      if newPath\n        path = newPath\n        os.put path, image\n\n      return\n\n  frame.src = \"https://danielx.net/pixel-editor/embedded/\"\n\n  frame\n",
       "mode": "100644"
     },
     "API.md": {
@@ -432,7 +432,7 @@
     },
     "pixel_editor": {
       "path": "pixel_editor",
-      "content": "(function() {\n  var Postmaster;\n\n  Postmaster = require(\"postmaster\");\n\n  module.exports = function(os, file, path) {\n    var frame, postmaster;\n    frame = document.createElement(\"iframe\");\n    frame.sandbox = \"allow-scripts allow-modals\";\n    postmaster = Postmaster({}, {\n      remoteTarget: function() {\n        return frame.contentWindow;\n      },\n      childLoaded: function() {\n        postmaster.invokeRemote(\"fromBlob\", file);\n        frame.contentWindow.focus();\n      },\n      save: function(_arg) {\n        var image, newPath;\n        image = _arg.image;\n        newPath = prompt(\"Save As\", path);\n        if (newPath) {\n          path = newPath;\n          os.put(path, image);\n        }\n      }\n    });\n    frame.src = \"https://danielx.net/pixel-editor/embedded/\";\n    return frame;\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var Postmaster;\n\n  Postmaster = require(\"postmaster\");\n\n  module.exports = function(os, file, path) {\n    var frame, postmaster;\n    frame = document.createElement(\"iframe\");\n    frame.sandbox = \"allow-scripts allow-modals\";\n    postmaster = Postmaster({}, {\n      remoteTarget: function() {\n        return frame.contentWindow;\n      },\n      childLoaded: function() {\n        postmaster.invokeRemote(\"loadFile\", file);\n        frame.contentWindow.focus();\n      },\n      save: function(_arg) {\n        var image, newPath;\n        image = _arg.image;\n        newPath = prompt(\"Save As\", path);\n        if (newPath) {\n          path = newPath;\n          os.put(path, image);\n        }\n      }\n    });\n    frame.src = \"https://danielx.net/pixel-editor/embedded/\";\n    return frame;\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "lib/hamlet-runtime": {
