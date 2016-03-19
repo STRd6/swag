@@ -8,7 +8,7 @@ module.exports = (os, file, path) ->
     remoteTarget: -> frame.contentWindow
 
     childLoaded: ->
-      postmaster.invokeRemote "fromBlob", file
+      postmaster.invokeRemote "loadFile", file
       frame.contentWindow.focus()
 
       return
