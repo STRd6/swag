@@ -6,14 +6,21 @@ module.exports = (os, file, path) ->
 
   postmaster = Postmaster {},
     remoteTarget: -> frame.contentWindow
+
     childLoaded: ->
       postmaster.invokeRemote "fromBlob", file
+      frame.contentWindow.focus()
+
+      return
+
     save: ({image}) ->
       newPath = prompt "Save As", path
 
       if newPath
         path = newPath
         os.put path, image
+
+      return
 
   frame.src = "https://danielx.net/pixel-editor/embedded/"
 
