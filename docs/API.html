@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>TODO</title>
+  <title>API</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="https://strd6.github.io/cdn/parallel/docco.css" />
@@ -16,7 +16,7 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
-    <h1 id="todo">TODO</h1>
+    <h1 id="os">OS</h1>
 
   </div>
   <div class="content"><pre><code>
@@ -28,15 +28,8 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-2">&#182;</a>
     </div>
-    <p>Observe and display auth status (user name/email)</p>
-<p>Handle auth refresh when credentials expire</p>
-<p>Multiple Simultaneous Editors</p>
-<p>Drag to Editor (Files and Folders)</p>
-<p>Windowing System</p>
-<p>Basic OS API</p>
-<p>Cache directory listings so we don&#39;t need to refetch when opening the directories again</p>
-<p>Update listing when writing files</p>
-<h2 id="tolater">TOLater</h2>
+    <p>These OS methods are exposed to apps via postMessage.</p>
+<h2 id="-savefile-"><code>saveFile</code></h2>
 
   </div>
   <div class="content"><pre><code>
@@ -48,9 +41,11 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-3">&#182;</a>
     </div>
-    <p>Log out button</p>
-<p>Maintain identity id from unauth -&gt; auth user</p>
-<h2 id="done">Done</h2>
+    <p><code>saveFile blob, [path]</code></p>
+<p>Saves a file to the file system. </p>
+<p>Prompts for a path if no path is given.</p>
+<p>Prompts for override if a file exists at that path.</p>
+<h2 id="-openfile-"><code>openFile</code></h2>
 
   </div>
   <div class="content"><pre><code>
@@ -62,15 +57,187 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-4">&#182;</a>
     </div>
-    <p>Embed pixel editor (load and save files)</p>
-<p>Delete File</p>
-<p>Auto-login</p>
-<p>Display Filetree</p>
-<p>Expand/collapse folders</p>
+    <p><code>openFile options</code></p>
+<p>Display the OS file chooser. </p>
+<p>Returns a promise that is fulfilled with the selected file or rejected if 
+cancelled.</p>
+<h2 id="-readfile-"><code>readFile</code></h2>
 
   </div>
   <div class="content"><pre><code>
 </code></pre>
+</div>
+</li>
+<li id="section-5">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-5">&#182;</a>
+    </div>
+    <p><code>readFile path</code></p>
+<p>Read a file from the system.</p>
+<p>Returns a promise fulfilled with a blob or rejected with an error.</p>
+<h2 id="-list-"><code>list</code></h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-6">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-6">&#182;</a>
+    </div>
+    <p><code>list path</code></p>
+<p>List directory contents. Returns a promise fulfilled with a directory listing</p>
+
+  </div>
+  <div class="content"><pre><code>path: &quot;&quot;
+folders: [&quot;&quot;,...]
+files: [&quot;&quot;,...]</code></pre>
+</div>
+</li>
+<li id="section-7">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-7">&#182;</a>
+    </div>
+    <h2 id="-send-"><code>send</code></h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-8">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-8">&#182;</a>
+    </div>
+    <p><code>send appId, method, args...</code></p>
+<p>Send a message to another app.</p>
+<h1 id="app">App</h1>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-9">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-9">&#182;</a>
+    </div>
+    <p>These App methods are exposed to the OS to handle file interactions, user 
+interactions and App&lt;-&gt;App interactions.</p>
+<p>Drop File</p>
+<p><code>loadFile blob</code></p>
+<p>Drop Directory</p>
+<p><code>loadDirectory directoryListing</code></p>
+<h2 id="fs-notifications">FS Notifications</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-10">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-10">&#182;</a>
+    </div>
+    <p>Should be able to subscribe to notifications when file/directory contents change.</p>
+<h2 id="standard-streams-and-backpressure">Standard Streams and Backpressure</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-11">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-11">&#182;</a>
+    </div>
+    <p>Apps should be able to read data as a stream. Streams should block and wait if
+the process gets backed up. The blockage should propagate back reducing the output
+of the upstream processes. When the process becomes unblocked the upstream will
+unblock as well.</p>
+<p>Just doodling...</p>
+<p>Handler is called when data is written to the stream from the source. The
+handler won&#39;t be called again until <code>next</code> is called. If <code>next</code> is called with
+an error the error will be propagated back.</p>
+<p>Data can be any JS atom that can survive <code>postMessage</code>.<a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm">1</a></p>
+
+  </div>
+  <div class="content"><pre><code>inputStream.attach (data, next) -&gt;
+  outputStream.write(data)
+  .then -&gt;
+    next()
+  .catch (e) -&gt;
+    next(e)
+
+inputStream.attach (data, next) -&gt;
+  outputStream.write(data, next)</code></pre>
+</div>
+</li>
+<li id="section-12">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-12">&#182;</a>
+    </div>
+    <p>Cat</p>
+
+  </div>
+  <div class="content"><pre><code>STDIN (data, next) -&gt;
+  STDOUT(data, next)</code></pre>
+</div>
+</li>
+<li id="section-13">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-13">&#182;</a>
+    </div>
+    <p>Split</p>
+<p>Duplicate an input to two output streams</p>
+
+  </div>
+  <div class="content"><pre><code>STDIN (data, next) -&gt;
+  fn1 = null
+  fn2 = null
+
+  p1 = new Promise (resolve, reject) -&gt;
+    fn1 = (arg) -&gt;
+      if arguments.length
+        reject arg
+      else
+        resolve()
+
+  p2 = ...
+
+  Promise.all [p1, p2]
+  .then next
+
+  outStream1.write(data, f1)
+  outStream2.write(data, f2)</code></pre>
+</div>
+</li>
+<li id="section-14">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-14">&#182;</a>
+    </div>
+    <p>Join</p>
+<p>TODO: This could write one extra atom before backing up...
+Probably need to keep track of a promise for pending writes to wait on before
+writing again.</p>
+
+  </div>
+  <div class="content"><pre><code>S1 (data, next) -&gt;
+  out data, next
+
+S2 (data, next) -&gt;
+  out data, next</code></pre>
 </div>
 </li>
     </ul>
