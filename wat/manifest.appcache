@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# 1468198302848
+
+CACHE:
+index.html
+../wat.json
+https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js
+
+NETWORK:
+https://*
+http://*
+*

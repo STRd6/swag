@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>whimsy-fs</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="https://strd6.github.io/cdn/parallel/docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    <ul class="sections">
+      <li id="section-1">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-1">&#182;</a>
+    </div>
+    <h1 id="-s-w-a-g-">*S*W*A*G*</h1>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-2">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-2">&#182;</a>
+    </div>
+    <p>Let&#39;s use AWS Cognito to be all serverless all the time!</p>
+<p>Use S3 as a filesystem.</p>
+<p>urls can be constructed by</p>
+
+  </div>
+  <div class="content"><pre><code>   https://s3.amazonaws.com/#{bucket}/#{userId}/#{sha}
+-&gt; https://#{base_cdn}/#{userId}/#{sha}
+   https://#{user_cdn}/#{sha}</code></pre>
+</div>
+</li>
+<li id="section-3">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-3">&#182;</a>
+    </div>
+    <p>Pricing: <a href="https://aws.amazon.com/s3/pricing/">https://aws.amazon.com/s3/pricing/</a></p>
+<h2 id="s3-bucket-config">S3 Bucket Config</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-4">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-4">&#182;</a>
+    </div>
+    <p>You need to set up CORS on the S3 Bucket to allow posting from the browser</p>
+
+  </div>
+  <div class="content"><pre><code>&lt;CORSConfiguration xmlns=&quot;http://s3.amazonaws.com/doc/2006-03-01&quot;&gt;
+   &lt;CORSRule&gt;
+      &lt;AllowedOrigin&gt;*&lt;/AllowedOrigin&gt;
+      &lt;AllowedMethod&gt;GET&lt;/AllowedMethod&gt;
+      &lt;AllowedMethod&gt;PUT&lt;/AllowedMethod&gt;
+      &lt;AllowedMethod&gt;POST&lt;/AllowedMethod&gt;
+      &lt;AllowedMethod&gt;DELETE&lt;/AllowedMethod&gt;
+      &lt;AllowedHeader&gt;*&lt;/AllowedHeader&gt;
+   &lt;/CORSRule&gt;
+&lt;/CORSConfiguration&gt;</code></pre>
+</div>
+</li>
+<li id="section-5">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-5">&#182;</a>
+    </div>
+    <p>Set up public read policy on S3 Bucket</p>
+
+  </div>
+  <div class="content"><pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Principal&quot;: &quot;*&quot;,
+            &quot;Action&quot;: [
+                &quot;s3:GetObject&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;arn:aws:s3:::whimsy-fs/*&quot;
+            ]
+        }
+    ]
+}</code></pre>
+</div>
+</li>
+<li id="section-6">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-6">&#182;</a>
+    </div>
+    <h2 id="cloudfront-config">Cloudfront Config</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-7">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-7">&#182;</a>
+    </div>
+    <p>https only</p>
+<p>Point at S3 bucket</p>
+<p>Enable options and whitelist headers for CORS</p>
+<h2 id="route53-config">Route53 Config</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-8">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-8">&#182;</a>
+    </div>
+    <p>fs.whimsy.space</p>
+<p>Create A (Alias record) pointing to cloudfront distribution</p>
+<h2 id="aws-cognito-user-policy">AWS Cognito User Policy</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-9">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-9">&#182;</a>
+    </div>
+    
+  </div>
+  <div class="content"><pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;dynamodb:GetItem&quot;,
+                &quot;dynamodb:BatchGetItem&quot;,
+                &quot;dynamodb:Query&quot;,
+                &quot;dynamodb:PutItem&quot;,
+                &quot;dynamodb:UpdateItem&quot;,
+                &quot;dynamodb:DeleteItem&quot;,
+                &quot;dynamodb:BatchWriteItem&quot;
+            ],
+            &quot;Resource&quot;: [
+                &quot;arn:aws:dynamodb:us-east-1:186123361267:table/whimsy-fs&quot;
+            ],
+            &quot;Condition&quot;: {
+                &quot;ForAllValues:StringEquals&quot;: {
+                    &quot;dynamodb:LeadingKeys&quot;: [
+                        &quot;${cognito-identity.amazonaws.com:sub}&quot;
+                    ]
+                }
+            }
+        },
+        {
+            &quot;Action&quot;: [
+                &quot;s3:ListBucket&quot;
+            ],
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Resource&quot;: [
+                &quot;arn:aws:s3:::whimsy-fs&quot;
+            ],
+            &quot;Condition&quot;: {
+                &quot;StringLike&quot;: {
+                    &quot;s3:prefix&quot;: [
+                        &quot;${cognito-identity.amazonaws.com:sub}/*&quot;
+                    ]
+                }
+            }
+        },
+        {
+            &quot;Action&quot;: [
+                &quot;s3:GetObject&quot;,
+                &quot;s3:PutObject&quot;,
+                &quot;s3:DeleteObject&quot;
+            ],
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Resource&quot;: [
+                &quot;arn:aws:s3:::whimsy-fs/${cognito-identity.amazonaws.com:sub}/*&quot;
+            ]
+        }
+    ]
+}</code></pre>
+</div>
+</li>
+<li id="section-10">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-10">&#182;</a>
+    </div>
+    <h2 id="using-amazon-login-for-auth">Using Amazon Login for Auth</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-11">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-11">&#182;</a>
+    </div>
+    <p>Could also instead use FB, Google, pretty much any OAuth</p>
+<p>Set up app at <a href="https://sellercentral.amazon.com/gp/homepage.html">https://sellercentral.amazon.com/gp/homepage.html</a> the interface is
+hideous yet functional.</p>
+<p>Update Cognito Identity Pool with Amazon App Id</p>
+<p>Optionally add Twitter, Goog, FB, etc.</p>
+<h1 id="discontinued-tangents">Discontinued Tangents</h1>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-12">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-12">&#182;</a>
+    </div>
+    <p>DynamoDB Semantic Records linking to S3 Content Addressable Store</p>
+<p>DynamoDB Table</p>
+
+  </div>
+  <div class="content"><pre><code>  Primary keys     Index    Link to CAS
+    |       |        |           |
++-------+------+-----------+----------+------------------------
+| owner | path | createdAt |    sha   |  extra... (tags, etc.)</code></pre>
+</div>
+</li>
+<li id="section-13">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-13">&#182;</a>
+    </div>
+    <h2 id="saving-a-file">Saving a File</h2>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-14">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-14">&#182;</a>
+    </div>
+    <p>sha is base64 url-encoded sha256 of file contents</p>
+<p>Compute sha, save to S3 and DynamoDB</p>
+<p>S3 path is &quot;${cognito-identity.amazonaws.com:sub}/#{sha}&quot;</p>
+<p>DynamoDB path is logical path ex: /Desktop/yolo.png
+owner is &quot;${cognito-identity.amazonaws.com:sub}&quot;
+createdAt number: unix epoch timestamp
+sha is the same sha that matches s3
+arbitrary extra meta data can be added</p>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+    </ul>
+  </div>
+  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/coffee-script/1.6.3/coffee-script.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js"></script><script>
+  (function() {
+  var ErrorReporter, bindUpdates, createEditor, exec, findInteractiveElements, readShebang, runners;
+
+  createEditor = function(code, shebang, section) {
+    var annotationElement, contentElement, editorElement, exampleSection, runtimeElement;
+    exampleSection = $("<li>", {
+      "class": "example"
+    });
+    annotationElement = $("<div>", {
+      "class": "annotation"
+    });
+    editorElement = $("<textarea>", {
+      "class": "annotation",
+      text: code
+    });
+    contentElement = $("<div>", {
+      "class": "content"
+    });
+    runtimeElement = $("<div>", {
+      "class": "output"
+    });
+    contentElement.append(runtimeElement);
+    annotationElement.append(editorElement);
+    exampleSection.append(annotationElement);
+    exampleSection.append(contentElement);
+    section.after(exampleSection);
+    return bindUpdates(shebang, editorElement, runtimeElement);
+  };
+
+  bindUpdates = function(shebang, editorElement, runtimeElement) {
+    return editorElement.on("keyup", function() {
+      var e, report, source;
+      report = ErrorReporter(editorElement);
+      source = editorElement.val();
+      try {
+        runners[shebang]({
+          editorElement: editorElement,
+          source: source,
+          runtimeElement: runtimeElement
+        });
+        return report.clear();
+      } catch (_error) {
+        e = _error;
+        return report(e);
+      }
+    });
+  };
+
+  readShebang = function(source) {
+    var match;
+    if (match = source.match(/^\#\! (.*)\n/)) {
+      return match[1];
+    }
+  };
+
+  ErrorReporter = function(editor) {
+    var reporter;
+    reporter = function(error) {
+      var errorParagraph;
+      if (editor.next().is("p.error")) {
+        return editor.next().text(error);
+      } else {
+        errorParagraph = $("<p>", {
+          "class": "error",
+          text: error.toString()
+        });
+        return editor.after(errorParagraph);
+      }
+    };
+    reporter.clear = function() {
+      if (editor.next().is("p.error")) {
+        return editor.next().remove();
+      }
+    };
+    return reporter;
+  };
+
+  findInteractiveElements = function() {
+    return $("blockquote > pre > code").each(function() {
+      var blockQuoteElement, code, codeElement, sectionElement, shebang;
+      codeElement = $(this);
+      code = codeElement.text();
+      if (shebang = readShebang(code)) {
+        if (!runners[shebang]) {
+          return;
+        }
+        code = code.split("\n").slice(1).join("\n");
+        blockQuoteElement = codeElement.parent().parent();
+        sectionElement = blockQuoteElement.parent().parent();
+        blockQuoteElement.remove();
+        return createEditor(code, shebang, sectionElement);
+      }
+    });
+  };
+
+  runners = {};
+
+  (typeof window !== "undefined" && window !== null ? window : global).Interactive = {
+    register: function(name, runner) {
+      runners[name] = runner;
+      findInteractiveElements();
+      return $('#container').on('keyup', 'textarea', function() {
+        $(this).height(0);
+        return $(this).height(this.scrollHeight);
+      }).find('textarea').keyup();
+    }
+  };
+
+  exec = function(_arg) {
+    var code, editorElement, runtimeElement, source;
+    source = _arg.source, code = _arg.code, editorElement = _arg.editorElement, runtimeElement = _arg.runtimeElement;
+    runtimeElement.remove();
+    editorElement.replaceWith($("<pre>", {
+      text: source
+    }));
+    return setTimeout(function() {
+      return Function(code)();
+    }, 0);
+  };
+
+  $(function() {
+    Interactive.register("setup", function(params) {
+      params.code = CoffeeScript.compile(params.source);
+      return exec(params);
+    });
+    return Interactive.register("setup-js", function(params) {
+      params.code = params.source;
+      return exec(params);
+    });
+  });
+
+}).call(this);
+
+</script><script src="package.js"></script>
+</body>
+</html>
