@@ -8,7 +8,7 @@ These OS methods are exposed to apps via postMessage.
 
 `saveFile blob, [path]`
 
-Saves a file to the file system. 
+Saves a file to the file system.
 
 Prompts for a path if no path is given.
 
@@ -20,9 +20,9 @@ Prompts for override if a file exists at that path.
 
 `openFile options`
 
-Display the OS file chooser. 
+Display the OS file chooser.
 
-Returns a promise that is fulfilled with the selected file or rejected if 
+Returns a promise that is fulfilled with the selected file or rejected if
 cancelled.
 
 
@@ -57,7 +57,7 @@ Send a message to another app.
 App
 ===
 
-These App methods are exposed to the OS to handle file interactions, user 
+These App methods are exposed to the OS to handle file interactions, user
 interactions and App<->App interactions.
 
 Drop File
