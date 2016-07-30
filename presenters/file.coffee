@@ -1,4 +1,4 @@
-module.exports = FilePresenter = (data, fs, os, fp) ->
+module.exports = FilePresenter = (data, os, fp) ->
   {name, path} = data
 
   name: name

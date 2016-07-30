@@ -39,11 +39,12 @@ module.exports = ->
     fileTreeElement: Observable()
 
     attachFS: (fs) ->
-      self.fileTreeElement FolderTemplate FolderPresenter {path: "/"}, fs, self
+      self.fileTreeElement FolderTemplate FolderPresenter {path: "/"}, self
 
       self.fs = -> fs
 
     open: (path) ->
+      console.log "Open: ", path
       self.fs().get(path)
       .then (file) ->
         type = file.type
@@ -59,6 +60,9 @@ module.exports = ->
             appElement = handler(file, path)
 
             self.editorElement appElement
+
+    list: (path) ->
+      self.fs().list path
 
     put: (path, file) ->
       self.fs().put path, file
