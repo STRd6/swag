@@ -5,7 +5,7 @@ FileTemplate = require "../templates/file"
 
 FilePresenter = require "./file"
 
-module.exports = FolderPresenter = (data, fs, os) ->
+module.exports = FolderPresenter = (data, os) ->
   {path, folders, files, name} = data
   name ?= path
   folders ?= []
@@ -13,9 +13,9 @@ module.exports = FolderPresenter = (data, fs, os) ->
 
   self =
     Folder: (data) ->
-      FolderTemplate FolderPresenter data, fs, os
+      FolderTemplate FolderPresenter data, os
     File: (data) ->
-      FileTemplate FilePresenter data, fs, os, self
+      FileTemplate FilePresenter data, os, self
     class: ->
       "expanded" if self.expanded()
     click: (e) ->
@@ -34,6 +34,6 @@ module.exports = FolderPresenter = (data, fs, os) ->
     path: path
     refresh: ->
       console.log "List:", path
-      fs.list(path).then ({files, folders}) ->
+      os.list(path).then ({files, folders}) ->
         self.files(files)
         self.folders(folders)

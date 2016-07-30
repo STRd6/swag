@@ -1,2 +1,3 @@
-# swag
-Serverless Working Applications Group
+# S\*W\*A\*G
+
+Serverless Web Applications Group
