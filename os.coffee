@@ -8,22 +8,18 @@ EditorTemplate = require "./templates/editor"
 FolderTemplate = require "./templates/folder"
 FolderPresenter = require "./presenters/folder"
 
+{readAsText} = require "../util"
+
 module.exports = ->
   appHandlers =
     "^text": (file, path) ->
       editor = TextEditor(self)
 
-      reader = new FileReader
-
-      reader.onload = ->
-        editor.contents reader.result
+      readAsText(file)
+      .then (contents) ->
+        editor.contents contents
         editor.contentType file.type
         editor.path path
-
-      reader.onerror = (e) ->
-        console.error e
-
-      reader.readAsText(file)
 
       return EditorTemplate editor
 

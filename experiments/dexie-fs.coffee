@@ -1,50 +1,18 @@
 # FS
 
+DexieFS = require "../fs/dexie-driver"
+Filesystem = require "../fs/filesystem"
 
-db = new Dexie 'fs'
+fs = Filesystem DexieFS('fs')
 
-db.version(1).stores
-	files: 'path, blob, type, createdAt, updatedAt'
+fs.cd "goose"
+fs.cd "rad"
 
-Files = db.files
+fs.cd "/grass"
 
-fs = do ->
-  SEPARATOR = "/"
-
-  normalizeDir = (dir) ->
-    normalizePath(dir).replace(/\/?$/, SEPARATOR)
-
-  normalizePath = (path) ->
-    path.replace(/\/\/+/, SEPARATOR)
-    .replace(/\/[^/]*\/\.\./g, "") # handle .. paths
-    .replace(/\/\.\//g, SEPARATOR) # handle . paths
-
-  join = (paths...) ->
-    normalizePath paths.join SEPARATOR
-
-  pwd = SEPARATOR
-
-  read: (path) ->
-    Files.get(join(pwd, path))
-
-  write: (path, blob) ->
-    Files.put
-      path: join(pwd, path)
-      blob: blob
-      type: blob.type
-      updatedAt: +new Date
-
-  ls: (dir) ->
-    Files.where("path").startsWith(dir)
-
-  cd: (path) ->
-    if path.indexOf(SEPARATOR) is 0
-      
-    else
-      pwd = normalizeDir join(pwd, path)
-
-  pwd: ->
-    pwd
+fs.ls "/"
+.then (results) ->
+  console.log results
 
 fs.write "test", new Blob ['duder']
 .then ->
