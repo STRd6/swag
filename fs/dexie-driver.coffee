@@ -27,3 +27,5 @@ module.exports = (dbName='fs') ->
       # Filter out everything that isn't a file in the current directory
       results.filter (result) ->
         result.path.replace(dir, "").indexOf('/') is -1
+      .map ({path}) ->
+        path.replace(dir, "")

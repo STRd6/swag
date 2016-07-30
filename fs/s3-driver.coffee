@@ -1,6 +1,4 @@
-# TODO: This is being replaced by fs/s3-driver.coffee
-
-{log, pinvoke, startsWith, endsWith} = require "./util"
+{log, pinvoke, startsWith, endsWith} = require "../util"
 
 delimiter = "/"
 
@@ -49,22 +47,24 @@ list = (bucket, id, dir) ->
     Prefix: prefix
     Delimiter: delimiter
   .then (result) ->
-    path: prefix.replace(id, "")
-    folders: result.CommonPrefixes.map (p) ->
+    result.CommonPrefixes.map (p) ->
       p.Prefix.replace(prefix, "")
-    files: result.Contents.map (o) ->
+    .concat result.Contents.map (o) ->
       o.Key.replace(prefix, "")
 
 module.exports = (id, bucket) ->
-  get: (path) ->
+  read: (path) ->
     unless startsWith path, delimiter
       path = delimiter + path
 
     key = "#{id}#{path}"
 
     getFromS3(bucket, key)
+    .then (blob) ->
+      path: path
+      blob: blob
 
-  put: (path, file) ->
+  write: (path, file) ->
     unless startsWith path, delimiter
       path = delimiter + path
 

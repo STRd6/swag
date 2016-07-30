@@ -47,20 +47,6 @@ initFileDrop document, (file, path) ->
   key = "#{path}/#{file.name}".replace(/\/+/, "/")
   os.put key, file
 
-receivedCredentials = ->
-  console.log AWS.config.credentials
-  id = AWS.config.credentials.identityId
-
-  document.body.removeChild document.querySelector('#LoginWithAmazon')
-
-  bucket = new AWS.S3
-    params:
-      Bucket: "whimsy-fs"
-
-  fs = require('./fs')(id, bucket)
-
-  os.attachFS fs
-
 AWS.config.update
   region: 'us-east-1'
 
@@ -77,38 +63,27 @@ if logins
   .catch (e) ->
     console.error e
 
-require "./amazon_login"
-document.body.appendChild require("./templates/login")
+{awsLogin} = require "./amazon_login"
+loginTemplate = require("./templates/login")
   click: ->
     options = { scope : 'profile' }
-    amazon.Login.authorize options, (resp) ->
-      if !resp.error
-        console.log resp
-        token = resp.access_token
-        creds = AWS.config.credentials
+    awsLogin(options)
+    .then (logins) ->
+      localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
+      receivedCredentials()
 
-        logins =
-          'www.amazon.com': token
-        localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
+document.body.appendChild loginTemplate
 
-        creds.params.Logins = logins
+receivedCredentials = ->
+  console.log AWS.config.credentials
+  id = AWS.config.credentials.identityId
 
-        creds.expired = true
+  document.body.removeChild loginTemplate
 
-        queryUserInfo(token)
+  bucket = new AWS.S3
+    params:
+      Bucket: "whimsy-fs"
 
-        pinvoke AWS.config.credentials, "get"
-        .then receivedCredentials
+  fs = require('./fs')(id, bucket)
 
-queryUserInfo = (token) ->
-  fetch "https://api.amazon.com/user/profile",
-    headers:
-      Authorization: "bearer #{token}"
-      Accept: "application/json"
-  .then (response) ->
-    response.json()
-  .then (json) ->
-    console.log json
-  .catch (e) ->
-    console.error e
-
+  os.attachFS fs
