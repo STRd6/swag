@@ -1,10 +1,10 @@
-DexieDriver = require "../fs/dexie-driver"
+RAMDriver = require "../fs/ram-driver"
 Filesystem = require "../fs/filesystem"
 
 {readAsText} = require "../util"
 
-describe "Dexie FS", ->
-  fs = Filesystem DexieDriver('test-fs')
+describe "RAM FS", ->
+  fs = Filesystem RAMDriver()
 
   it "should write, read, and delete files", (done) ->
     blob = new Blob ["yolo"]
