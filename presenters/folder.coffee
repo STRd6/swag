@@ -5,6 +5,8 @@ FileTemplate = require "../templates/file"
 
 FilePresenter = require "./file"
 
+{endsWith} = require "../util"
+
 module.exports = FolderPresenter = (data, os) ->
   {path, folders, files, name} = data
   name ?= path
@@ -34,6 +36,11 @@ module.exports = FolderPresenter = (data, os) ->
     path: path
     refresh: ->
       console.log "List:", path
-      os.list(path).then ({files, folders}) ->
+      os.list(path).then (results) ->
+        files = results.filter (result) ->
+          !endsWith(result, "/")
+        folders = results.filter (result) ->
+          endsWith(result, "/")
+
         self.files(files)
         self.folders(folders)

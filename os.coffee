@@ -41,9 +41,9 @@ module.exports = ->
 
     open: (path) ->
       console.log "Open: ", path
-      self.fs().get(path)
-      .then (file) ->
-        type = file.type
+      self.fs().read(path)
+      .then ({blob}) ->
+        type = blob.type
         handled = false
         Object.keys(appHandlers).forEach (matcher) ->
           return if handled
@@ -53,15 +53,15 @@ module.exports = ->
 
           if regex.test(type)
             handled = true
-            appElement = handler(file, path)
+            appElement = handler(blob, path)
 
             self.editorElement appElement
 
     list: (path) ->
-      self.fs().list path
+      self.fs().ls path
 
     put: (path, file) ->
-      self.fs().put path, file
+      self.fs().write path, file
 
     delete: (path) ->
       self.fs().delete path

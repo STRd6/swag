@@ -25,7 +25,7 @@ fs.write "test", new Blob ['duder']
 # TODO
 
 # Mount filesystems at directories
-# 
+#
 # /local
 # /s3
 # ...

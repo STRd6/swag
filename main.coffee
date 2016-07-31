@@ -23,6 +23,8 @@ document.head.appendChild style
 
 Drop = require("./lib/drop")
 
+Filesystem = require "./fs/filesystem"
+S3Driver = require "./fs/s3-driver"
 OS = require "./os"
 os = OS()
 
@@ -84,6 +86,4 @@ receivedCredentials = ->
     params:
       Bucket: "whimsy-fs"
 
-  fs = require('./fs')(id, bucket)
-
-  os.attachFS fs
+  os.attachFS Filesystem S3Driver(id, bucket)
