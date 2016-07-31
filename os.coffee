@@ -7,6 +7,7 @@ PixelEditor = require "./pixel_editor"
 EditorTemplate = require "./templates/editor"
 FolderTemplate = require "./templates/folder"
 FolderPresenter = require "./presenters/folder"
+LauncherElement = require "./templates/launcher"
 
 {readAsText} = require "../util"
 
@@ -65,3 +66,13 @@ module.exports = ->
 
     delete: (path) ->
       self.fs().delete path
+    
+    apps: [{
+      name: "Pixel"
+      launch: ->
+        self.editorElement PixelEditor(self)
+    }]
+
+  self.launcherElement = LauncherElement(self)
+
+  return self
