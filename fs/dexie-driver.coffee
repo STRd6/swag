@@ -1,3 +1,5 @@
+{uniq} = require "../util"
+
 module.exports = (dbName='fs') ->
   db = new Dexie dbName
 
@@ -22,10 +24,5 @@ module.exports = (dbName='fs') ->
   list: (dir) ->
     Files.where("path").startsWith(dir).toArray()
     .then (results) ->
-      # TODO: Directory results?
-
-      # Filter out everything that isn't a file in the current directory
-      results.filter (result) ->
-        result.path.replace(dir, "").indexOf('/') is -1
-      .map ({path}) ->
-        path.replace(dir, "")
+      uniq results.map ({path}) ->
+        path = path.replace(dir, "").replace(/\/.*$/, "/")

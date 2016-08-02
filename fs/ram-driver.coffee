@@ -1,8 +1,8 @@
-{startsWith} = require "../util"
+{startsWith, uniq} = require "../util"
 
 module.exports = ->
   files = []
-  
+
   P = (fn) ->
     Promise.resolve().then fn
 
@@ -41,10 +41,5 @@ module.exports = ->
           startsWith path, dir
 
       .then (results) ->
-        # TODO: Directory results?
-
-        # Filter out everything that isn't a file in the current directory
-        results.filter (result) ->
-          result.path.replace(dir, "").indexOf('/') is -1
-        .map ({path}) ->
-          path.replace(dir, "")
+        uniq results.map ({path}) ->
+          path = path.replace(dir, "").replace(/\/.*$/, "/")

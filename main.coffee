@@ -25,8 +25,11 @@ Drop = require("./lib/drop")
 
 Filesystem = require "./fs/filesystem"
 S3Driver = require "./fs/s3-driver"
+LocalDriver = require "./fs/dexie-driver"
 OS = require "./os"
 os = OS()
+
+global.os = os
 
 OSTemplate = require "./templates/os"
 document.body.appendChild OSTemplate os
@@ -52,38 +55,42 @@ initFileDrop document, (file, path) ->
 AWS.config.update
   region: 'us-east-1'
 
-try
-  logins = JSON.parse localStorage.WHIMSY_FS_AWS_LOGIN
+if false # S3 
+  try
+    logins = JSON.parse localStorage.WHIMSY_FS_AWS_LOGIN
+  
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials
+    IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
+    Logins: logins
+  
+  if logins
+    pinvoke AWS.config.credentials, "get"
+    .then receivedCredentials
+    .catch (e) ->
+      console.error e
 
-AWS.config.credentials = new AWS.CognitoIdentityCredentials
-  IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
-  Logins: logins
+  {awsLogin} = require "./amazon_login"
+  loginTemplate = require("./templates/login")
+    click: ->
+      options = { scope : 'profile' }
+      awsLogin(options)
+      .then (logins) ->
+        localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
+        receivedCredentials()
+  
+  document.body.appendChild loginTemplate
+  
+  receivedCredentials = ->
+    console.log AWS.config.credentials
+    id = AWS.config.credentials.identityId
+  
+    document.body.removeChild loginTemplate
+  
+    bucket = new AWS.S3
+      params:
+        Bucket: "whimsy-fs"
+  
+    os.attachFS Filesystem S3Driver(id, bucket)
 
-if logins
-  pinvoke AWS.config.credentials, "get"
-  .then receivedCredentials
-  .catch (e) ->
-    console.error e
-
-{awsLogin} = require "./amazon_login"
-loginTemplate = require("./templates/login")
-  click: ->
-    options = { scope : 'profile' }
-    awsLogin(options)
-    .then (logins) ->
-      localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
-      receivedCredentials()
-
-document.body.appendChild loginTemplate
-
-receivedCredentials = ->
-  console.log AWS.config.credentials
-  id = AWS.config.credentials.identityId
-
-  document.body.removeChild loginTemplate
-
-  bucket = new AWS.S3
-    params:
-      Bucket: "whimsy-fs"
-
-  os.attachFS Filesystem S3Driver(id, bucket)
+else
+  os.attachFS Filesystem LocalDriver()

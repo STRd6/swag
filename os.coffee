@@ -66,7 +66,7 @@ module.exports = ->
 
     delete: (path) ->
       self.fs().delete path
-    
+
     apps: [{
       name: "Pixel"
       launch: ->

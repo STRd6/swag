@@ -30,3 +30,6 @@ module.exports =
         resolve reader.result
       reader.onerror = reject
       reader.readAsText(file)
+
+  uniq: (array) ->
+    Array.from new Set array
