@@ -55,14 +55,14 @@ initFileDrop document, (file, path) ->
 AWS.config.update
   region: 'us-east-1'
 
-if false # S3 
+if false # S3
   try
     logins = JSON.parse localStorage.WHIMSY_FS_AWS_LOGIN
-  
+
   AWS.config.credentials = new AWS.CognitoIdentityCredentials
     IdentityPoolId: 'us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9'
     Logins: logins
-  
+
   if logins
     pinvoke AWS.config.credentials, "get"
     .then receivedCredentials
@@ -77,20 +77,23 @@ if false # S3
       .then (logins) ->
         localStorage.WHIMSY_FS_AWS_LOGIN = JSON.stringify(logins)
         receivedCredentials()
-  
+
   document.body.appendChild loginTemplate
-  
+
   receivedCredentials = ->
     console.log AWS.config.credentials
     id = AWS.config.credentials.identityId
-  
+
     document.body.removeChild loginTemplate
-  
+
     bucket = new AWS.S3
       params:
         Bucket: "whimsy-fs"
-  
+
     os.attachFS Filesystem S3Driver(id, bucket)
 
 else
-  os.attachFS Filesystem LocalDriver()
+  db = require("./db")('fs')
+  os.attachFS Filesystem LocalDriver(db)
+
+  global.db = db
