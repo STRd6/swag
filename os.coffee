@@ -41,11 +41,12 @@ module.exports = ->
       self.fs = -> fs
 
     open: (path) ->
-      console.log "Open: ", path
       self.fs().read(path)
       .then ({blob}) ->
         type = blob.type
+        console.log "Open: ", path, blob.type
         handled = false
+
         Object.keys(appHandlers).forEach (matcher) ->
           return if handled
 
