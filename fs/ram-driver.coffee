@@ -1,8 +1,6 @@
 {startsWith, uniq} = require "../util"
 
-module.exports = ->
-  files = []
-
+module.exports = (files=[]) ->
   P = (fn) ->
     Promise.resolve().then fn
 
@@ -17,16 +15,19 @@ module.exports = ->
     write: (path, blob) ->
       self.read path
       .then (file) ->
+        now = +new Date
+
         if file
           file.blob = blob
           file.type = blob.type
-          file.updatedAt = +new Date
+          file.updatedAt = now
         else
           files.push
             path: path
             blob: blob
             type: blob.type
-            updatedAt: +new Date
+            updatedAt: now
+            createdAt: now
 
     delete: (path) ->
       P ->
