@@ -26,12 +26,15 @@ describe "RAM FS", ->
     Promise.all [
       "test2"
       "yolo/yo"
-      "yolo/yo2"
+      "yolo/yo2/wat"
+      "yolo/yo2/cool"
     ].map (path) ->
       fs.write path, blob
     .then ->
       fs.ls "yolo"
     .then (results) ->
       assert.equal results.length, 2
+      assert.equal results[0], "yo"
+      assert.equal results[1], "yo2/"
       done()
     .catch done
