@@ -1,4 +1,4 @@
-# entryPoint: "experiments/dexie-fs"
+entryPoint: "experiments/spreadsheet"
 remoteDependencies: [
   "https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js"
   "https://api-cdn.amazon.com/sdk/login1.js"

@@ -1,0 +1,5 @@
+- Cell = require "./cell"
+
+tr
+  - @cells.forEach (cell) ->
+    = Cell cell
