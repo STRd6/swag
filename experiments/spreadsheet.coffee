@@ -1,3 +1,7 @@
+style = document.createElement "style"
+style.innerHTML = require "../style"
+document.head.appendChild style
+
 data = [0...100].map (i) ->
   id: i
   name: "yolo"

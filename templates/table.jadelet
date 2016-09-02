@@ -1,8 +1,10 @@
 - Row = require "./row"
 
 table
-  tr
-    - @headers.forEach (header) ->
-      th= header
-  - @rows.forEach (row) ->
-    = Row row
+  thead
+    tr
+      - @headers.forEach (header) ->
+        th= header
+  tbody
+    - @rows.forEach (row) ->
+      = Row row
