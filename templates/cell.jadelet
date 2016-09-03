@@ -1,2 +1,2 @@
 td
-  = this # input(value=this)
+  input(value=this)
