@@ -2,18 +2,37 @@ style = document.createElement "style"
 style.innerHTML = require "../style"
 document.head.appendChild style
 
+Observable = require "observable"
+
 Clusterize = require "../lib/clusterize"
 
+o = (value, type) ->
+  attribute = Observable(value)
+  if type
+    attribute.type = type
+
+  attribute.value = attribute
+
+  return attribute
+
 data = [0...1000].map (i) ->
-  id: i
-  name: "yolo"
+  id: o i
+  name: o "yolo"
+  color: o "#FF0000", "color"
 
 RowTemplate = require "../templates/row"
+
+InputTemplate = require "../templates/input"
+ColorTemplate = require "../templates/color"
+
+ColorPresenter = require "../presenters/color"
 
 RowView = (datum) ->
   RowTemplate
     cells: Object.keys(datum).map (key) ->
-      datum[key]
+      value = datum[key]
+
+      InputTemplate value
 
 TablePresenter = (data) ->
   headers = Object.keys data[0]
@@ -38,7 +57,7 @@ TableView = (data) ->
     true
 
   sortFn = (a, b) ->
-    a.id - b.id
+    a.id() - b.id()
 
   filterAndSort = (data, filterFn, sortFn) ->
     filterFn ?= -> true
