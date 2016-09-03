@@ -10,24 +10,57 @@ data = [0...1000].map (i) ->
 
 RowTemplate = require "../templates/row"
 
+RowView = (datum) ->
+  RowTemplate
+    cells: Object.keys(datum).map (key) ->
+      datum[key]
+
 TablePresenter = (data) ->
   headers = Object.keys data[0]
 
   headers: headers
-  rows: data.map (datum) ->
-    cells: Object.keys(datum).map (key) -> 
-      datum[key]
-  renderRow: (row) ->
-    RowTemplate(row)
 
 TableTemplate = require "../templates/table"
 
-containerElement = TableTemplate TablePresenter data
-tableBody = containerElement.children[0].children[1]
+# TableView takes some data and returns an object with a container element
+# displaying the table data that can be inserted into the DOM.
+# The DOM elements are inserted in chunks so the table should scale to 
+# displaying large volumes of data.
+# The view will have the ability to filter/sort the data.
+# When the layout changes the refresh method should be called to ensure the
+# scrollable and visible items are correct for the new container size.
+TableView = (data) ->
+  presenter = TablePresenter data
+  containerElement = TableTemplate presenter
+  tableBody = containerElement.children[0].children[1]
 
-clusterize = new Clusterize
-  scrollElem: containerElement
-  contentElem: tableBody
+  filterFn = (datum) ->
+    true
 
-document.body.appendChild containerElement
-clusterize.refresh()
+  sortFn = (a, b) ->
+    a.id - b.id
+
+  filterAndSort = (data, filterFn, sortFn) ->
+    filterFn ?= -> true
+    filteredData = data.filter(filterFn)
+
+    if sortFn
+      filteredData.sort(sortFn)
+    else
+      filteredData
+
+  rowElements = ->
+    filterAndSort(data, filterFn, sortFn).map RowView
+
+  clusterize = new Clusterize
+    scrollElem: containerElement
+    contentElem: tableBody
+    rows:  rowElements()
+
+  element: containerElement
+  refresh: ->
+    clusterize.refresh()
+
+tableView = TableView(data)
+document.body.appendChild tableView.element
+tableView.refresh()
