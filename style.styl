@@ -77,8 +77,16 @@ launcher
   position: absolute
   bottom: 0
 
+container
+  display: block
+  width: 100%
+  height: 100%
+  overflow: auto
+
 table
   border-collapse: collapse
+  height: 100%
+  overflow: auto
   width: 100%
 
 th
@@ -87,11 +95,10 @@ th
 thead
   border-bottom: 1px solid black
 
-tr
-  > td > input
-    border: none
-    background-color: transparent
-    width: 100%
+td > input
+  border: none
+  background-color: transparent
+  width: 100%
 
 tr:nth-child(even)
   background-color: #EEE

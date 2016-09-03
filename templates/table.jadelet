@@ -1,10 +1,10 @@
-- Row = require "./row"
+- render = @renderRow
 
-table
-  thead
-    tr
-      - @headers.forEach (header) ->
-        th= header
-  tbody
-    - @rows.forEach (row) ->
-      = Row row
+container
+  table
+    thead
+      tr
+        - @headers.forEach (header) ->
+          th= header
+    tbody
+      = @rows.map @renderRow
