@@ -23,9 +23,6 @@ data = [0...1000].map (i) ->
 RowTemplate = require "../templates/row"
 
 InputTemplate = require "../templates/input"
-ColorTemplate = require "../templates/color"
-
-ColorPresenter = require "../presenters/color"
 
 RowView = (datum) ->
   RowTemplate
