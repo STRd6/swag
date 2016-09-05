@@ -1,34 +1,39 @@
 parse = require "../lib/indent-parse"
 
 module.exports = parse """
-  File
-    New
-    Open
-    Save
-    Save As
-  Edit
-    Undo
+  [F]ile
+    [N]ew
+    [O]pen
+    [S]ave
+    Save [A]s
+    -
+    Page Set[u]p
+    [P]rint
+    -
+    E[x]it
+  [E]dit
+    [U]ndo
     Redo
     -
-    Cut
-    Copy
-    Paste
-    Delete
+    Cu[t]
+    [C]opy
+    [P]aste
+    De[l]ete
     -
-    Find
-    Find Next
-    Replace
-    Go To
+    [F]ind
+    Find [N]ext
+    [R]eplace
+    [G]o To
     -
-    Select All
-    Time/Date
-  Format
-    Word Wrap
-    Font...
-  View
-    Status Bar
-  Help
-    View Help
+    Select [A]ll
+    Time/[D]ate
+  F[o]rmat
+    [W]ord Wrap
+    [F]ont...
+  [V]iew
+    [S]tatus Bar
+  [H]elp
+    View [H]elp
     -
-    About Notepad
+    [A]bout Notepad
 """

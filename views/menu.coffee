@@ -12,6 +12,18 @@ isDescendant = (element, ancestor) ->
     return true if element is ancestor
     element = parent
 
+formatLabel = (labelText) ->
+  # TODO: Parse out accelerator keys for underlining when alt is pressed
+  # TODO: This is an XSS opportunity if we don't trust the menu text
+  labelHTML = labelText.replace(/\[([^\]]+)\]/, "<span class=\"accelerator\">$1</span>")
+
+  label = document.createElement "label"
+  label.innerHTML = labelHTML
+
+  console.log label
+
+  return label
+
 Presenter = (data) ->
   
 MenuItemView = (item) ->
@@ -38,7 +50,7 @@ MenuItemView = (item) ->
         unless isDescendant(e.toElement, element)
           console.log "out", e
           # active false
-      label: label
+      label: formatLabel label
       content: items.map (item) ->
         MenuItemView(item)
 
@@ -49,7 +61,7 @@ MenuItemView = (item) ->
       MenuItemTemplate
         click: ->
           console.log item
-        label: item
+        label: formatLabel item
 
 module.exports = (data) ->
   presenter = Presenter(data)
@@ -59,6 +71,13 @@ module.exports = (data) ->
 
   element = MenuTemplate
     items: menuItems
+
+  # TODO: Add keyboard navigation to menus when accelerating and also in general
+  document.addEventListener "keydown", (e) ->
+    console.log e
+    {key} = e
+    if key is "Alt"
+      element.classList.toggle("accelerator-active")
 
   element: element
 
