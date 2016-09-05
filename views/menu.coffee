@@ -5,7 +5,6 @@ Observable = require "observable"
 MenuTemplate = require "../templates/menu"
 MenuItemTemplate = require "../templates/menu-item"
 MenuSeparator = require "../templates/menu-separator"
-SubmenuTemplate = require "../templates/submenu"
 
 isDescendant = (element, ancestor) ->
   return unless element
@@ -37,10 +36,12 @@ MenuItemView = (item, application) ->
       unless isDescendant(e.target, element)
         active false
 
-    element = SubmenuTemplate
-      class: "menu"
-      activeClass: ->
-        "active" if active()
+    element = MenuItemTemplate
+      class: ->
+        [
+          "menu"
+          "active" if active()
+        ]
       click: ->
         active true
       mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
@@ -50,8 +51,10 @@ MenuItemView = (item, application) ->
         unless isDescendant(e.toElement, element)
           active false
       label: formatLabel label
-      content: items.map (item) ->
-        MenuItemView(item, application)
+      content: MenuTemplate
+        class: "options"
+        items: items.map (item) ->
+          MenuItemView(item, application)
 
   else
     if item is "-" # separator
@@ -67,6 +70,17 @@ MenuItemView = (item, application) ->
           # and enabled/disabled statuses.
           application[action]()
         label: formatLabel item
+        mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
+          unless isDescendant(e.fromElement, element)
+            active true
+        mouseout: (e) ->
+          unless isDescendant(e.toElement, element)
+            active false
+        class: ->
+          [
+            "active" if active()
+          ]
+        content: null
 
 module.exports = (data, application) ->
   acceleratorActive = Observable false
@@ -79,7 +93,10 @@ module.exports = (data, application) ->
   element = MenuTemplate
     items: menuItems
     class: ->
-      "accelerator-active" if acceleratorActive()
+      [
+        "menu-bar"
+        "accelerator-active" if acceleratorActive()
+      ]
 
   # TODO: Add keyboard navigation to menus when accelerating and also in general
   document.addEventListener "keydown", (e) ->

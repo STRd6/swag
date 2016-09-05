@@ -1,3 +1,0 @@
-li(@class class=@activeClass @click @mouseover @mouseout)
-  = @label
-  ul.options= @content

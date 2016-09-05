@@ -112,6 +112,7 @@ li
   > label
     display: block
     padding: 0 0.25em
+    white-space: nowrap
 
 ul.menu-bar
   background-color: lightgrey
@@ -124,6 +125,10 @@ ul.menu-bar
 .accelerator-active
   span.accelerator
     text-decoration: underline
+
+li.active
+  background-color: blue
+  color: white
 
 li.menu
   > ul.options
@@ -139,9 +144,6 @@ li.menu
         top: 0
 
   &.active
-    background-color: blue
-    color: white
-
     > ul.options
       background-color: lightgrey
       color: black
