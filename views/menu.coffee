@@ -32,6 +32,7 @@ MenuItemView = (item, application) ->
   if Array.isArray(item) # Submenu
     [label, items] = item
 
+    # TODO: Move this out to a single handler
     document.addEventListener "mousedown", (e) ->
       unless isDescendant(e.target, element)
         active false
@@ -86,17 +87,24 @@ module.exports = (data, application) ->
   acceleratorActive = Observable false
   # Track active menus and item for navigation
   activeItem = Observable null
+  previouslyFocusedElement = null
 
   menuItems = data.map (item) ->
     MenuItemView(item, application)
 
   element = MenuTemplate
     items: menuItems
+    focus: ->
+      console.log "Focus!"
     class: ->
       [
         "menu-bar"
         "accelerator-active" if acceleratorActive()
       ]
+
+  document.addEventListener "mousedown", (e) ->
+    unless isDescendant(e.target, element)
+      acceleratorActive false
 
   # TODO: Add keyboard navigation to menus when accelerating and also in general
   document.addEventListener "keydown", (e) ->
@@ -104,7 +112,17 @@ module.exports = (data, application) ->
     {key} = e
     switch key
       when "Alt"
-        acceleratorActive.toggle()
+        menuIsActive = false
+        if acceleratorActive() or menuIsActive
+          acceleratorActive false
+          # De-activate menu and focus previously focused element
+          previouslyFocusedElement?.focus()
+        else
+          # Store previously focused element
+          # Get menu ready for accelerating!
+          previouslyFocusedElement = document.activeElement
+          element.focus()
+          acceleratorActive true
       when "ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"
         if acceleratorActive()
           e.preventDefault()

@@ -109,6 +109,10 @@ tr:nth-child(even)
 li
   list-style-type: none
 
+  &.active
+    background-color: blue
+    color: white
+
   > label
     display: block
     padding: 0 0.25em
@@ -122,13 +126,9 @@ ul.menu-bar
   > li
     display: inline-block
 
-.accelerator-active
-  span.accelerator
-    text-decoration: underline
-
-li.active
-  background-color: blue
-  color: white
+  &.accelerator-active
+    span.accelerator
+      text-decoration: underline
 
 li.menu
   > ul.options

@@ -15,7 +15,7 @@ o = (value, type) ->
 
   return attribute
 
-data = [0...1000].map (i) ->
+data = [0...100].map (i) ->
   id: o i
   name: o "yolo"
   color: o "#FF0000", "color"
