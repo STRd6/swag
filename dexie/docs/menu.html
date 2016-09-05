@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>README</title>
+  <title>menu</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="https://strd6.github.io/cdn/parallel/docco.css" />
@@ -16,8 +16,82 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-1">&#182;</a>
     </div>
-    <h1 id="s-w-a-g">S*W*A*G</h1>
-<p>Serverless Web Applications Group</p>
+    <h1 id="dsl-for-creating-menus">DSL For Creating Menus</h1>
+
+  </div>
+  <div class="content"><pre><code>
+</code></pre>
+</div>
+</li>
+<li id="section-2">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-2">&#182;</a>
+    </div>
+    <p>Example from Notepad</p>
+
+  </div>
+  <div class="content"><pre><code>File
+  New
+  Open
+  Save
+  Save As
+Edit
+  Undo
+  Redo
+  -
+  Cut
+  Copy
+  Paste
+  Delete
+  -
+  Find
+  Find Next
+  Replace
+  Go To
+  -
+  Select All
+  Time/Date
+Format
+  Word Wrap
+  Font...
+View
+  Status Bar
+Help
+  View Help
+  -
+  About Notepad</code></pre>
+</div>
+</li>
+<li id="section-3">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-3">&#182;</a>
+    </div>
+    <p>Top level menus are not indented, their options are indented beneath them.
+Separators are indicated by <code>-</code>. Submenus can be indented further:</p>
+
+  </div>
+  <div class="content"><pre><code>File
+  New
+  Open
+  Save
+  -
+  Import
+    Audio...
+    Labels...
+    MIDI...
+    Raw Data...
+  -</code></pre>
+</div>
+</li>
+<li id="section-4">
+  <div class="annotation">
+    <div class="pilwrap">
+      <a class="pilcrow" href="#section-4">&#182;</a>
+    </div>
+    <p>Windows seems to use <code>...</code> after options to indicate that the option will open
+a window for further configuration.</p>
 
   </div>
   <div class="content"><pre><code>
