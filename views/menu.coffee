@@ -45,12 +45,10 @@ MenuItemView = (item, application) ->
         active true
       mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
         unless isDescendant(e.fromElement, element)
-          console.log "over", e
-          # active true
+          active true
       mouseout: (e) ->
         unless isDescendant(e.toElement, element)
-          console.log "out", e
-          # active false
+          active false
       label: formatLabel label
       content: items.map (item) ->
         MenuItemView(item, application)

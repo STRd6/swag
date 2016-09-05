@@ -129,13 +129,23 @@ li.menu
   > ul.options
     display: none
 
+    // Submenu
+    > li.menu
+      position: relative
+
+      > ul.options
+        position: absolute
+        left: 100%
+        top: 0
+
   &.active
+    background-color: blue
+    color: white
+
     > ul.options
       background-color: lightgrey
+      color: black
       display: block
       padding: 0
       position: absolute
-      > li
-        &:hover
-          background-color: blue
-          color: white
+

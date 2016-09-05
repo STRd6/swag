@@ -11,6 +11,14 @@ module.exports = parse """
     [P]rint
     -
     E[x]it
+  [T]est
+    Test[1]
+      Hello
+      Wat
+    Test[2]
+      [N]ested
+      [R]ad
+        So Rad
   [E]dit
     [U]ndo
     Redo
