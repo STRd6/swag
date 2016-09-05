@@ -15,7 +15,7 @@ o = (value, type) ->
 
   return attribute
 
-data = [0...10].map (i) ->
+data = [0...1000].map (i) ->
   id: o i
   name: o "yolo"
   color: o "#FF0000", "color"
@@ -74,9 +74,11 @@ TableView = (data) ->
 
 sampleMenuParsed = require "../samples/notepad-menu"
 MenuView = require "../views/menu"
-{element} = MenuView(sampleMenuParsed)
+{element} = MenuView sampleMenuParsed,
+  new: ->
+    console.log 'New!'
 document.body.appendChild element
 
-tableView = TableView(data)
+tableView = TableView data
 document.body.appendChild tableView.element
 tableView.refresh()

@@ -1,1 +1,1 @@
-ul.menu-bar= @items
+ul.menu-bar(@class)= @items
