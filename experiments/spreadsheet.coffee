@@ -15,7 +15,7 @@ o = (value, type) ->
 
   return attribute
 
-data = [0...1000].map (i) ->
+data = [0...10].map (i) ->
   id: o i
   name: o "yolo"
   color: o "#FF0000", "color"
@@ -31,23 +31,18 @@ RowView = (datum) ->
 
       InputTemplate value
 
-TablePresenter = (data) ->
-  headers = Object.keys data[0]
-
-  headers: headers
-
 TableTemplate = require "../templates/table"
 
 # TableView takes some data and returns an object with a container element
 # displaying the table data that can be inserted into the DOM.
-# The DOM elements are inserted in chunks so the table should scale to 
+# The DOM elements are inserted in chunks so the table should scale to
 # displaying large volumes of data.
 # The view will have the ability to filter/sort the data.
 # When the layout changes the refresh method should be called to ensure the
 # scrollable and visible items are correct for the new container size.
 TableView = (data) ->
-  presenter = TablePresenter data
-  containerElement = TableTemplate presenter
+  containerElement = TableTemplate
+    headers: Object.keys data[0]
   tableBody = containerElement.children[0].children[1]
 
   filterFn = (datum) ->
@@ -76,6 +71,8 @@ TableView = (data) ->
   element: containerElement
   refresh: ->
     clusterize.refresh()
+
+document.body.appendChild require('../templates/menu')()
 
 tableView = TableView(data)
 document.body.appendChild tableView.element

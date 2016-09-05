@@ -23,8 +23,9 @@ setup = ->
     fs.cd "test"
 
     fs
-    
+
 describe "S3 FS", ->
+->
   it "should write, read, and delete files", (done) ->
     @timeout(10000)
 

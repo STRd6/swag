@@ -1,0 +1,10 @@
+ul.menu-bar
+  li.menu.active
+    span File
+    ul.options
+      li Open
+      li Save
+  li View
+  li Edit
+  li Insert
+  li Tools
