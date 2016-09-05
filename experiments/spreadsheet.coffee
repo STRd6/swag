@@ -33,6 +33,20 @@ RowView = (datum) ->
 
 TableTemplate = require "../templates/table"
 
+# Focus same cell in next row
+advanceRow = (path) ->
+  [td] = path.filter (element) ->
+    element.tagName is "TD"
+  return unless td
+
+  tr = td.parentElement
+  cellIndex = Array::indexOf.call(tr.children, td)
+  nextRowElement = tr.nextSibling
+
+  if nextRowElement
+    input = nextRowElement.children[cellIndex].querySelector('input')
+    input?.focus()
+
 # TableView takes some data and returns an object with a container element
 # displaying the table data that can be inserted into the DOM.
 # The DOM elements are inserted in chunks so the table should scale to
@@ -43,6 +57,12 @@ TableTemplate = require "../templates/table"
 TableView = (data) ->
   containerElement = TableTemplate
     headers: Object.keys data[0]
+    keydown: (event) ->
+      {key, path} = event
+      if key is "Enter"
+        event.preventDefault()
+        advanceRow path
+
   tableBody = containerElement.children[0].children[1]
 
   filterFn = (datum) ->

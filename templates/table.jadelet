@@ -1,5 +1,5 @@
 container
-  table
+  table(@keydown)
     thead
       tr
         - @headers.forEach (header) ->

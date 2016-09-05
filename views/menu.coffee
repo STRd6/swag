@@ -94,8 +94,8 @@ module.exports = (data, application) ->
 
   element = MenuTemplate
     items: menuItems
-    focus: ->
-      console.log "Focus!"
+    log: (e) ->
+      console.log e
     class: ->
       [
         "menu-bar"
