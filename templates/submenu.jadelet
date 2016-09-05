@@ -1,0 +1,3 @@
+li(@class class=@activeClass @click)
+  label= @label
+  ul.options= @content

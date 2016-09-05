@@ -72,7 +72,10 @@ TableView = (data) ->
   refresh: ->
     clusterize.refresh()
 
-document.body.appendChild require('../templates/menu')()
+sampleMenuParsed = require "../samples/notepad-menu"
+MenuView = require "../views/menu"
+{element} = MenuView(sampleMenuParsed)
+document.body.appendChild element
 
 tableView = TableView(data)
 document.body.appendChild tableView.element

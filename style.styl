@@ -104,6 +104,9 @@ tr:nth-child(even)
   background-color: #EEE
 
 // Menus
+li
+  list-style-type: none
+
 ul.menu-bar
   background-color: lightgrey
   margin: 0
@@ -118,5 +121,11 @@ ul.menu-bar
 
   &.active
     > ul.options
+      background-color: lightgrey
       display: block
       padding: 0
+      position: absolute
+      > li
+        &:hover
+          background-color: blue
+          color: white
