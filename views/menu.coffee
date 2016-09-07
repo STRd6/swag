@@ -46,6 +46,8 @@ SeparatorView = ->
   separator: true
 
 MenuItemView = (item, handler, parent, activeItem) ->
+  return SeparatorView() if item is "-" # separator
+
   self =
     element: null
     active: null
@@ -54,67 +56,64 @@ MenuItemView = (item, handler, parent, activeItem) ->
   active = ->
     isDescendant activeItem()?.element, element
 
-  if item is "-" # separator
-    return SeparatorView()
+  if Array.isArray(item) # Submenu
+    [label, items] = item
+
+    self.cursor = (direction) ->
+      switch direction
+        when "Up"
+          activeItem advance(navigableItems, activeItem(), -1)
+        when "Down"
+          activeItem advance(navigableItems, activeItem(), 1)
+
+    items = items.map (item) ->
+      MenuItemView(item, handler, self, activeItem)
+
+    navigableItems = items.filter (item) ->
+      !item.separator
+
+    click = -> activeItem self
+    content = MenuTemplate
+      class: "options"
+      items: items.map (item) ->
+        item.element
+      log: console.log
+
   else
-    if Array.isArray(item) # Submenu
-      [label, items] = item
+    label = item
 
-      self.cursor = (direction) ->
-        switch direction
-          when "Up"
-            activeItem advance(navigableItems, activeItem(), -1)
-          when "Down"
-            activeItem advance(navigableItems, activeItem(), 1)
+    # TODO: Optionally parse out custom action symbol from entries like:
+    #
+    #     [F]ont... -> showFont
+    actionName = formatAction label
+    click = ->
+      # TODO: Optionally hook in to Action objects so we can display hotkeys
+      # and enabled/disabled statuses.
+      handler[actionName]?()
 
-      items = items.map (item) ->
-        MenuItemView(item, handler, self, activeItem)
+    self.cursor = parent.cursor
 
-      navigableItems = items.filter (item) ->
-        !item.separator
-
-      click = -> activeItem self
-      content = MenuTemplate
-        class: "options"
-        items: items.map (item) ->
-          item.element
-        log: console.log
-
-    else
-      label = item
-
-      # TODO: Optionally parse out custom action symbol from entries like:
-      #
-      #     [F]ont... -> showFont
-      actionName = formatAction label
-      click = ->
-        # TODO: Optionally hook in to Action objects so we can display hotkeys
-        # and enabled/disabled statuses.
-        handler[actionName]?()
-
-      self.cursor = parent.cursor
-
-    element = MenuItemTemplate
-      class: ->
-        [
-          "menu" if items
-          "active" if active()
-        ]
-      click: click
-      mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
-        if isDescendant(e.target, element) and !e.defaultPrevented
-          e.preventDefault() 
-          # TODO: Find out what the default mouseover event 
-          # actually does! We're just using this to prevent handling the activation 
-          # above the first element that handles it
-          activeItem self
-      mouseout: (e) ->
-        unless isDescendant(e.toElement, element)
-          active false
-      keydown: (e) ->
-        console.log "DOWN", e
-      label: formatLabel label
-      content: content
+  element = MenuItemTemplate
+    class: ->
+      [
+        "menu" if items
+        "active" if active()
+      ]
+    click: click
+    mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
+      if isDescendant(e.target, element) and !e.defaultPrevented
+        e.preventDefault() 
+        # TODO: Find out what the default mouseover event 
+        # actually does! We're just using this to prevent handling the activation 
+        # above the first element that handles it
+        activeItem self
+    mouseout: (e) ->
+      unless isDescendant(e.toElement, element)
+        active false
+    keydown: (e) ->
+      console.log "DOWN", e
+    label: formatLabel label
+    content: content
 
   self.element = element
   self.active = active
