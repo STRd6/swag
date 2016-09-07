@@ -34,14 +34,17 @@ RowView = (datum) ->
 TableTemplate = require "../templates/table"
 
 # Focus same cell in next row
-advanceRow = (path) ->
+advanceRow = (path, prev) ->
   [td] = path.filter (element) ->
     element.tagName is "TD"
   return unless td
 
   tr = td.parentElement
   cellIndex = Array::indexOf.call(tr.children, td)
-  nextRowElement = tr.nextSibling
+  if prev
+    nextRowElement = tr.previousSibling
+  else
+    nextRowElement = tr.nextSibling
 
   if nextRowElement
     input = nextRowElement.children[cellIndex].querySelector('input')
@@ -59,9 +62,17 @@ TableView = (data) ->
     headers: Object.keys data[0]
     keydown: (event) ->
       {key, path} = event
-      if key is "Enter"
-        event.preventDefault()
-        advanceRow path
+      switch key
+        when "Enter", "ArrowDown"
+          event.preventDefault()
+          advanceRow path
+        when "ArrowUp"
+          event.preventDefault()
+          advanceRow path, true
+        # TODO: Left and Right
+        # Left and Right are trickier because you may want to navigate within a text input
+        # ... actually up and down get trickier too if we imagine text areas or
+        # even fancier inputs that may have their own controls...
 
   tableBody = containerElement.children[0].children[1]
 
