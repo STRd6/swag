@@ -11,6 +11,16 @@ A = (attr) ->
 
 asElement = A('element')
 
+advance = (list, currentItem, amount) ->
+  activeItemIndex = list.indexOf(currentItem) + amount
+
+  if activeItemIndex < 0
+    activeItemIndex = list.length - 1
+  else if activeItemIndex >= list.length
+    activeItemIndex = 0
+
+  list[activeItemIndex]
+
 isDescendant = (element, ancestor) ->
   return unless element
 
@@ -31,25 +41,43 @@ formatLabel = (labelText) ->
 
   return label
 
-MenuItemView = (item, handler, parent, activeItem) ->
-  active = ->
-    isDescendant activeItem()?.element, element
+SeparatorView = ->
+  element: MenuSeparator()
+  separator: true
 
+MenuItemView = (item, handler, parent, activeItem) ->
   self =
     element: null
     active: null
+    cursor: null
+
+  active = ->
+    isDescendant activeItem()?.element, element
 
   if item is "-" # separator
-    element = MenuSeparator()
+    return SeparatorView()
   else
     if Array.isArray(item) # Submenu
       [label, items] = item
+
+      self.cursor = (direction) ->
+        switch direction
+          when "Up"
+            activeItem advance(navigableItems, activeItem(), -1)
+          when "Down"
+            activeItem advance(navigableItems, activeItem(), 1)
+
+      items = items.map (item) ->
+        MenuItemView(item, handler, self, activeItem)
+
+      navigableItems = items.filter (item) ->
+        !item.separator
 
       click = -> activeItem self
       content = MenuTemplate
         class: "options"
         items: items.map (item) ->
-          MenuItemView(item, handler, self, activeItem).element
+          item.element
         log: console.log
 
     else
@@ -62,13 +90,11 @@ MenuItemView = (item, handler, parent, activeItem) ->
       click = ->
         # TODO: Optionally hook in to Action objects so we can display hotkeys
         # and enabled/disabled statuses.
-        try
-          handler[actionName]()
-        catch e
-          console.error e
+        handler[actionName]?()
+
+      self.cursor = parent.cursor
 
     element = MenuItemTemplate
-      log: console.log.bind console
       class: ->
         [
           "menu" if items
@@ -76,12 +102,11 @@ MenuItemView = (item, handler, parent, activeItem) ->
         ]
       click: click
       mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
-        console.log e
         if isDescendant(e.target, element) and !e.defaultPrevented
-          e.preventDefault() # TODO: Find out what the default mouseover event 
+          e.preventDefault() 
+          # TODO: Find out what the default mouseover event 
           # actually does! We're just using this to prevent handling the activation 
           # above the first element that handles it
-          console.log "active!", element, e.target
           activeItem self
       mouseout: (e) ->
         unless isDescendant(e.toElement, element)
@@ -122,6 +147,12 @@ module.exports = (data, application) ->
         "accelerator-active" if acceleratorActive()
       ]
 
+  deactivate = ->
+    activeItem null
+    acceleratorActive false
+    # De-activate menu and focus previously focused element
+    previouslyFocusedElement?.focus()
+
   document.addEventListener "mousedown", (e) ->
     unless isDescendant(e.target, element)
       acceleratorActive false
@@ -134,9 +165,7 @@ module.exports = (data, application) ->
       when "Alt"
         menuIsActive = false
         if acceleratorActive() or menuIsActive
-          acceleratorActive false
-          # De-activate menu and focus previously focused element
-          previouslyFocusedElement?.focus()
+          deactivate()
         else
           # Store previously focused element
           # Get menu ready for accelerating!
@@ -144,21 +173,17 @@ module.exports = (data, application) ->
           element.focus()
           activeItem self
           acceleratorActive true
-  
+
   element.addEventListener "keydown", (e) ->
     {key} = e
 
-    console.log "TOPDOWN", e
-
     switch key
       when "ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"
-        if acceleratorActive()
-          e.preventDefault()
-          direction = key.replace("Arrow", "")
-          ;#TODO: move cursor
-          console.log direction
+        e.preventDefault()
+        direction = key.replace("Arrow", "")
+        activeItem().cursor(direction)
       when "Escape"
-        console.log key
+        deactivate()
       else
         # TODO: Check Accelerator keys to jump to menu
         if acceleratorActive()
@@ -167,11 +192,3 @@ module.exports = (data, application) ->
   self.element = element
 
   return self
-
-###
-li.menu.active
-  span File
-  ul.options
-    li Open
-    li Save
-###
