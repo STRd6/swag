@@ -53,6 +53,8 @@ MenuItemView = (item, handler, parent, activeItem) ->
     active: null
     cursor: null
 
+  # TODO: This gets called per menu item when the state changes
+  # Could we shift it a little to only be called for the relevant subtree?
   active = ->
     isDescendant activeItem()?.element, element
 
@@ -100,14 +102,20 @@ MenuItemView = (item, handler, parent, activeItem) ->
         "active" if active()
       ]
     click: click
-    mouseover: (e) -> # TODO: Want to hide and show the correct menus so you can hover around to view them
+    mouseover: (e) ->
+      # TODO: Click to activate top level menus unless a menu is already active
+      # then hover to show.
       if isDescendant(e.target, element) and !e.defaultPrevented
-        e.preventDefault() 
+        e.preventDefault()
         # TODO: Find out what the default mouseover event 
         # actually does! We're just using this to prevent handling the activation 
         # above the first element that handles it
         activeItem self
-    mouseout: (e) ->
+    # TODO: We'll need to add a mousemove event to catch the times when
+    # you use the arrow keys to advance the cursor then move the mouse
+    # while staying on the previously active element. This may be able to
+    # replace mouseover.
+    mouseout: (e) -> # TODO: How should we really handle mouseout?
       unless isDescendant(e.toElement, element)
         active false
     keydown: (e) ->
