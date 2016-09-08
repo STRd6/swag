@@ -33,13 +33,24 @@ formatAction = (labelText) ->
   str.charAt(0).toLowerCase() + str.substring(1)
 
 formatLabel = (labelText) ->
+  accelerator = undefined
   # Parse out accelerator keys for underlining when alt is pressed
-  labelHTML = htmlEscape(labelText).replace(/\[([^\]]+)\]/, "<span class=\"accelerator\">$1</span>")
+  labelHTML = htmlEscape(labelText).replace /\[([^\]]+)\]/, (match, $1) ->
+    accelerator = $1.toLowerCase()
+    "<span class=\"accelerator\">#{$1}</span>"
 
   label = document.createElement "label"
   label.innerHTML = labelHTML
 
-  return label
+  return [label, accelerator]
+
+accelerateItem = (items, key) ->
+  [acceleratedItem] = items.filter (item) ->
+    item.accelerator is key
+
+  if acceleratedItem
+    # TODO: should there be some kind of exec rather than click action?
+    acceleratedItem.click()
 
 SeparatorView = ->
   element: MenuSeparator()
@@ -49,9 +60,12 @@ MenuItemView = (item, handler, parent, activeItem) ->
   return SeparatorView() if item is "-" # separator
 
   self =
+    accelerate: null
     element: null
     active: null
     cursor: null
+    click: null
+    items: null
 
   # TODO: This gets called per menu item when the state changes
   # Could we shift it a little to only be called for the relevant subtree?
@@ -61,12 +75,19 @@ MenuItemView = (item, handler, parent, activeItem) ->
   if Array.isArray(item) # Submenu
     [label, items] = item
 
+    self.accelerate = (key) ->
+      accelerateItem(items, key)
+
     self.cursor = (direction) ->
       switch direction
         when "Up"
           activeItem advance(navigableItems, activeItem(), -1)
         when "Down"
           activeItem advance(navigableItems, activeItem(), 1)
+        when "Left" # TODO: Fix left and right cursor nav in submenus
+          activeItem advance(parent.items, self, -1)
+        when "Right"
+          activeItem advance(parent.items, self, 1)
 
     items = items.map (item) ->
       MenuItemView(item, handler, self, activeItem)
@@ -74,6 +95,7 @@ MenuItemView = (item, handler, parent, activeItem) ->
     navigableItems = items.filter (item) ->
       !item.separator
 
+    self.items = items
     click = -> activeItem self
     content = MenuTemplate
       class: "options"
@@ -92,8 +114,12 @@ MenuItemView = (item, handler, parent, activeItem) ->
       # TODO: Optionally hook in to Action objects so we can display hotkeys
       # and enabled/disabled statuses.
       handler[actionName]?()
+      activeItem null
 
     self.cursor = parent.cursor
+    self.accelerate = parent.accelerate
+
+  [label, accelerator] = formatLabel label
 
   element = MenuItemTemplate
     class: ->
@@ -119,15 +145,19 @@ MenuItemView = (item, handler, parent, activeItem) ->
       unless isDescendant(e.toElement, element)
         active false
     keydown: (e) ->
-      console.log "DOWN", e
-    label: formatLabel label
+      ;#console.log "DOWN", e
+    label: label
     content: content
 
+  self.click = click
+  self.accelerator = accelerator
   self.element = element
   self.active = active
 
   return self
 
+# TODO: Can this be combined with MenuItemView to reduce some redundancy at the
+# top level?
 module.exports = (data, application) ->
   acceleratorActive = Observable false
   # Track active menus and item for navigation
@@ -136,8 +166,11 @@ module.exports = (data, application) ->
 
   self =
     element: null
+    accelerate: (key) ->
+      accelerateItem menuItems, key
+    items: null
 
-  menuItems = data.map (item) ->
+  self.items = menuItems = data.map (item) ->
     MenuItemView(item, application, self, activeItem)
 
   # Dispatch the key to the active menu element
@@ -178,7 +211,7 @@ module.exports = (data, application) ->
           # Get menu ready for accelerating!
           previouslyFocusedElement = document.activeElement
           element.focus()
-          activeItem self
+          activeItem self unless activeItem()
           acceleratorActive true
 
   element.addEventListener "keydown", (e) ->
@@ -192,9 +225,7 @@ module.exports = (data, application) ->
       when "Escape"
         deactivate()
       else
-        # TODO: Check Accelerator keys to jump to menu
-        if acceleratorActive()
-          accelerate key
+        accelerate key.toLowerCase() if acceleratorActive()
 
   self.element = element
 
