@@ -11,7 +11,10 @@ A = (attr) ->
 
 asElement = A('element')
 
-advance = (list, currentItem, amount) ->
+advance = (list, amount) ->
+  [currentItem] = list.filter (item) ->
+    item.active()
+
   activeItemIndex = list.indexOf(currentItem) + amount
 
   if activeItemIndex < 0
@@ -56,7 +59,7 @@ SeparatorView = ->
   element: MenuSeparator()
   separator: true
 
-MenuItemView = (item, handler, parent, activeItem) ->
+MenuItemView = (item, handler, parent, top, activeItem) ->
   return SeparatorView() if item is "-" # separator
 
   self =
@@ -66,6 +69,8 @@ MenuItemView = (item, handler, parent, activeItem) ->
     cursor: null
     click: null
     items: null
+    parent: null
+    navigableItems: null
 
   # TODO: This gets called per menu item when the state changes
   # Could we shift it a little to only be called for the relevant subtree?
@@ -79,24 +84,49 @@ MenuItemView = (item, handler, parent, activeItem) ->
       accelerateItem(items, key)
 
     self.cursor = (direction) ->
+      # TODO: Can we refactor out all the special case != top stuff?
       switch direction
         when "Up"
-          activeItem advance(navigableItems, activeItem(), -1)
+          if self is activeItem() and parent != top
+            activeItem advance(parent.navigableItems, -1)
+          else
+            activeItem advance(navigableItems, -1)
         when "Down"
-          activeItem advance(navigableItems, activeItem(), 1)
-        when "Left" # TODO: Fix left and right cursor nav in submenus
-          activeItem advance(parent.items, self, -1)
+          if self is activeItem() and parent != top
+            activeItem advance(parent.navigableItems, 1)
+          else
+            activeItem advance(navigableItems, 1)
+        when "Left"
+          console.log "Left!", self, activeItem()
+          # If we are at a top level menu select the adjacent menu
+          if parent is top or parent.parent is top
+            if self != activeItem()
+              activeItem self
+            else
+              activeItem advance(top.items, -1)
+          else # If we are in a submenu select self in the parent's items
+            if self != activeItem() 
+              activeItem self
+            else
+              activeItem parent
         when "Right"
-          activeItem advance(parent.items, self, 1)
+          if parent is top
+            activeItem advance(top.items, 1)
+          else # we have submenu items open that submenu and select the first one
+            activeItem navigableItems[0]
 
     items = items.map (item) ->
-      MenuItemView(item, handler, self, activeItem)
+      MenuItemView(item, handler, self, top, activeItem)
 
     navigableItems = items.filter (item) ->
       !item.separator
 
     self.items = items
-    click = -> activeItem self
+    self.navigableItems = navigableItems
+    click = (e) ->
+      return if e?.defaultPrevented
+
+      activeItem self
     content = MenuTemplate
       class: "options"
       items: items.map (item) ->
@@ -110,13 +140,26 @@ MenuItemView = (item, handler, parent, activeItem) ->
     #
     #     [F]ont... -> showFont
     actionName = formatAction label
-    click = ->
+    click = (e) ->
       # TODO: Optionally hook in to Action objects so we can display hotkeys
       # and enabled/disabled statuses.
+      e?.preventDefault()
+      console.log "Handled", actionName
       handler[actionName]?()
       activeItem null
 
-    self.cursor = parent.cursor
+    self.cursor = (direction) ->
+      switch direction
+        when "Right"
+          # Select the next dropdown list from the top menu
+          activeItem advance(top.items, 1)
+        when "Left"
+          if parent.parent is top
+            activeItem advance(top.items, -1)
+          else
+            parent.cursor(direction)
+        else
+          parent.cursor(direction)
     self.accelerate = parent.accelerate
 
   [label, accelerator] = formatLabel label
@@ -133,8 +176,8 @@ MenuItemView = (item, handler, parent, activeItem) ->
       # then hover to show.
       if isDescendant(e.target, element) and !e.defaultPrevented
         e.preventDefault()
-        # TODO: Find out what the default mouseover event 
-        # actually does! We're just using this to prevent handling the activation 
+        # TODO: Find out what the default mouseover event
+        # actually does! We're just using this to prevent handling the activation
         # above the first element that handles it
         activeItem self
     # TODO: We'll need to add a mousemove event to catch the times when
@@ -153,6 +196,7 @@ MenuItemView = (item, handler, parent, activeItem) ->
   self.accelerator = accelerator
   self.element = element
   self.active = active
+  self.parent = parent
 
   return self
 
@@ -171,7 +215,7 @@ module.exports = (data, application) ->
     items: null
 
   self.items = menuItems = data.map (item) ->
-    MenuItemView(item, application, self, activeItem)
+    MenuItemView(item, application, self, self, activeItem)
 
   # Dispatch the key to the active menu element
   accelerate = (key) ->
