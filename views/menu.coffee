@@ -9,6 +9,19 @@ MenuSeparator = require "../templates/menu-separator"
 A = (attr) ->
   (x) -> x[attr]
 
+F = (methodName) ->
+  (x) -> x[methodName]()
+
+# I hope I don't hate myself for this later
+# S for Safe invoke, invoke the method of the object, if it exists and is a
+# function, otherwise return the provided default value
+S = (object, method, defaultValue) ->
+  ->
+    if typeof object?[method] is 'function'
+      object[method]()
+    else
+      defaultValue
+
 asElement = A('element')
 
 advance = (list, amount) ->
@@ -31,8 +44,17 @@ isDescendant = (element, ancestor) ->
     return true if element is ancestor
     element = parent
 
+# Parse out custom action symbol from entries like:
+#
+#     [F]ont... -> showFont
+# 
+# Falling back to formatting the action title
 formatAction = (labelText) ->
-  str = labelText.replace(/[^A-Za-z0-9]/g, "")
+  [title, action] = labelText.split("->").map F("trim")
+
+  action ?= title
+
+  str = action.replace(/[^A-Za-z0-9]/g, "")
   str.charAt(0).toLowerCase() + str.substring(1)
 
 formatLabel = (labelText) ->
@@ -136,16 +158,22 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
   else
     label = item
 
-    # TODO: Optionally parse out custom action symbol from entries like:
-    #
-    #     [F]ont... -> showFont
     actionName = formatAction label
+    action = handler[actionName]
+    enabled = S(action, "enabled", true)
+    hotkey = S(action, "hotkey", true)
+
     click = (e) ->
       # TODO: Optionally hook in to Action objects so we can display hotkeys
       # and enabled/disabled statuses.
       e?.preventDefault()
       console.log "Handled", actionName
-      handler[actionName]?()
+
+      action?.call?(handler)
+
+      # TODO: More cleanup than just clearing the active item, like also we
+      # should clear accelerator state, and maybe return focus to previously
+      # focused element.
       activeItem null
 
     self.cursor = (direction) ->
@@ -187,10 +215,10 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
     mouseout: (e) -> # TODO: How should we really handle mouseout?
       unless isDescendant(e.toElement, element)
         active false
-    keydown: (e) ->
-      ;#console.log "DOWN", e
     label: label
     content: content
+    hotkey: hotkey
+    enabled: enabled
 
   self.click = click
   self.accelerator = accelerator
@@ -242,10 +270,11 @@ module.exports = (data, application) ->
       acceleratorActive false
       activeItem null
 
-  # TODO: Add keyboard navigation to menus when accelerating and also in general
   document.addEventListener "keydown", (e) ->
     {key} = e
     switch key
+      when "Enter"
+        activeItem()?.click()
       when "Alt"
         menuIsActive = false
         if acceleratorActive() or menuIsActive

@@ -105,6 +105,10 @@ td > input
 tr:nth-child(even)
   background-color: #EEE
 
+ul.menu-bar
+  font-family: "MS Sans Serif", monospace
+  font-size: 14px
+
 // Menus
 li
   list-style-type: none
@@ -137,6 +141,11 @@ li.menu
     // Submenu
     > li.menu
       position: relative
+
+      > label::after
+        content: ">"
+        float: right
+        font-weight: bold
 
       > ul.options
         position: absolute
