@@ -140,7 +140,6 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
     items = items.map (item) ->
       MenuItemView(item, handler, self, top, activeItem)
 
-    # TODO: Filter out disabled items, update via observables
     navigableItems = items.filter (item) ->
       !item.separator
 
@@ -168,14 +167,16 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
 
     click = (e) ->
       e?.preventDefault()
-      console.log "Handled", actionName
 
-      action?.call?(handler)
-
-      # TODO: More cleanup than just clearing the active item, like also we
-      # should clear accelerator state, and maybe return focus to previously
-      # focused element.
-      activeItem null
+      unless disabled()
+        console.log "Handled", actionName
+  
+        action?.call?(handler)
+  
+        # TODO: More cleanup than just clearing the active item, like also we
+        # should clear accelerator state, and maybe return focus to previously
+        # focused element.
+        activeItem null
 
     self.cursor = (direction) ->
       switch direction

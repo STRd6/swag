@@ -4,7 +4,7 @@
 body
   display: flex
   flex-direction: column
-  font-family: "MS Sans Serif", monospace
+  font-family: "MS Sans Serif", Chicago, monospace
   font-size: 14px
   margin: 0
 
@@ -121,6 +121,9 @@ li
   &[disabled]
     color: gray
 
+    &.active
+      background-color: rgba(0, 0, 0, 0.125)
+
 ul.menu-bar, ul.menu-options
   background-color: lightgrey
 
@@ -128,6 +131,9 @@ ul.menu-bar, ul.menu-options
   border-left: 1px solid rgba(255, 255, 255, 0.5)
   border-bottom: 1px solid rgba(0, 0, 0, 0.5)
   border-right: 1px solid rgba(0, 0, 0, 0.5)
+
+ul.menu-bar
+  border-top: none
 
 ul.menu-options
   padding: 2px

@@ -104,7 +104,7 @@ TableView = (data) ->
     clusterize.refresh()
 
 Action = (fn) ->
-  disabled: -> false
+  disabled: -> true
   hotkey: "F1"
   call: (args...) ->
     fn.call(args...)
