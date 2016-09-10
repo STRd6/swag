@@ -117,6 +117,13 @@ li
     display: block
     padding: 0 0.25em
     white-space: nowrap
+    
+    > span.hotkey
+      float: right
+      margin-left: 1em
+
+      &:empty
+        margin-left: 0
 
   &[disabled]
     color: gray
@@ -124,23 +131,33 @@ li
     &.active
       background-color: rgba(0, 0, 0, 0.125)
 
-ul.menu-bar
-  background-color: lightgrey
-  border-bottom: 1px solid rgba(0, 0, 0, 0.5)
+no-select()
+  user-select: none
+  -moz-user-select: none
+  -webkit-user-select: none
+  -ms-user-select: none
 
 ul.menu-options
-  background-color: lightgrey
+  no-select()
 
+  background-color: lightgrey
   border-top: 1px solid rgba(255, 255, 255, 0.5)
   border-left: 1px solid rgba(255, 255, 255, 0.5)
   border-bottom: 1px solid rgba(0, 0, 0, 0.5)
   border-right: 1px solid rgba(0, 0, 0, 0.5)
+
+  box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.5);
 
   padding: 2px
   padding-bottom: 3px
   position: absolute
 
 ul.menu-bar
+  no-select()
+
+  background-color: lightgrey
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5)
+
   margin: 0
   padding: 0
 
@@ -167,7 +184,8 @@ li.menu
       > ul.menu-options
         position: absolute
         left: 100%
-        top: 0
+        top: -3px
+        margin-left: 1px
 
   &.active
     > ul.menu-options

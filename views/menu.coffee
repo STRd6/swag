@@ -60,14 +60,14 @@ formatAction = (labelText) ->
 formatLabel = (labelText) ->
   accelerator = undefined
   # Parse out accelerator keys for underlining when alt is pressed
-  labelHTML = htmlEscape(labelText).replace /\[([^\]]+)\]/, (match, $1) ->
+  titleHTML = htmlEscape(labelText).replace /\[([^\]]+)\]/, (match, $1) ->
     accelerator = $1.toLowerCase()
     "<span class=\"accelerator\">#{$1}</span>"
 
-  label = document.createElement "label"
-  label.innerHTML = labelHTML
+  span = document.createElement "span"
+  span.innerHTML = titleHTML
 
-  return [label, accelerator]
+  return [span, accelerator]
 
 accelerateItem = (items, key) ->
   [acceleratedItem] = items.filter (item) ->
@@ -163,7 +163,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
     actionName = formatAction label
     action = handler[actionName]
     disabled = S(action, "disabled", false)
-    hotkey = S(action, "hotkey", true)
+    hotkey = S(action, "hotkey", "")
 
     click = (e) ->
       e?.preventDefault()
@@ -192,7 +192,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
           parent.cursor(direction)
     self.accelerate = parent.accelerate
 
-  [label, accelerator] = formatLabel label
+  [title, accelerator] = formatLabel label
 
   element = MenuItemTemplate
     class: ->
@@ -210,7 +210,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
         e.preventDefault()
 
         activeItem self
-    label: label
+    title: title
     content: content
     hotkey: hotkey
     disabled: disabled

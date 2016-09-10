@@ -1,3 +1,5 @@
 li(@class @click @mousemove @disabled)
-  = @label
+  label
+    = @title
+    span.hotkey= @hotkey
   = @content
