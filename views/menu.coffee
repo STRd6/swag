@@ -150,7 +150,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
 
       activeItem self
     content = MenuTemplate
-      class: "options"
+      class: "menu-options"
       items: items.map (item) ->
         item.element
       log: console.log

@@ -4,8 +4,8 @@
 body
   display: flex
   flex-direction: column
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif
-  font-weight: 300
+  font-family: "MS Sans Serif", monospace
+  font-size: 14px
   margin: 0
 
 body, html
@@ -105,10 +105,6 @@ td > input
 tr:nth-child(even)
   background-color: #EEE
 
-ul.menu-bar
-  font-family: "MS Sans Serif", monospace
-  font-size: 14px
-
 // Menus
 li
   list-style-type: none
@@ -122,8 +118,20 @@ li
     padding: 0 0.25em
     white-space: nowrap
 
-ul.menu-bar
+ul.menu-bar, ul.menu-options
   background-color: lightgrey
+
+  border-top: 1px solid rgba(255, 255, 255, 0.5)
+  border-left: 1px solid rgba(255, 255, 255, 0.5)
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5)
+  border-right: 1px solid rgba(0, 0, 0, 0.5)
+
+ul.menu-options
+  padding: 2px
+  padding-bottom: 3px
+  position: absolute
+
+ul.menu-bar
   margin: 0
   padding: 0
 
@@ -135,7 +143,7 @@ ul.menu-bar
       text-decoration: underline
 
 li.menu
-  > ul.options
+  > ul.menu-options
     display: none
 
     // Submenu
@@ -143,20 +151,17 @@ li.menu
       position: relative
 
       > label::after
-        content: ">"
+        content: "▸"
         float: right
-        font-weight: bold
+        line-height: 1em
 
-      > ul.options
+      > ul.menu-options
         position: absolute
         left: 100%
         top: 0
 
   &.active
-    > ul.options
+    > ul.menu-options
       background-color: lightgrey
       color: black
       display: block
-      padding: 0
-      position: absolute
-
