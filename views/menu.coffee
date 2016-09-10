@@ -140,6 +140,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
     items = items.map (item) ->
       MenuItemView(item, handler, self, top, activeItem)
 
+    # TODO: Filter out disabled items, update via observables
     navigableItems = items.filter (item) ->
       !item.separator
 
@@ -158,14 +159,14 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
   else
     label = item
 
+    # Hook in to Action objects so we can display hotkeys
+    # and enabled/disabled statuses.
     actionName = formatAction label
     action = handler[actionName]
-    enabled = S(action, "enabled", true)
+    disabled = S(action, "disabled", false)
     hotkey = S(action, "hotkey", true)
 
     click = (e) ->
-      # TODO: Optionally hook in to Action objects so we can display hotkeys
-      # and enabled/disabled statuses.
       e?.preventDefault()
       console.log "Handled", actionName
 
@@ -199,26 +200,19 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
         "active" if active()
       ]
     click: click
-    mouseover: (e) ->
+    mousemove: (e) ->
       # TODO: Click to activate top level menus unless a menu is already active
       # then hover to show.
       if isDescendant(e.target, element) and !e.defaultPrevented
+        # Note: We're just using preventDefault to prevent handling the 
+        # activation above the first element that handles it
         e.preventDefault()
-        # TODO: Find out what the default mouseover event
-        # actually does! We're just using this to prevent handling the activation
-        # above the first element that handles it
+
         activeItem self
-    # TODO: We'll need to add a mousemove event to catch the times when
-    # you use the arrow keys to advance the cursor then move the mouse
-    # while staying on the previously active element. This may be able to
-    # replace mouseover.
-    mouseout: (e) -> # TODO: How should we really handle mouseout?
-      unless isDescendant(e.toElement, element)
-        active false
     label: label
     content: content
     hotkey: hotkey
-    enabled: enabled
+    disabled: disabled
 
   self.click = click
   self.accelerator = accelerator
@@ -264,6 +258,9 @@ module.exports = (data, application) ->
     acceleratorActive false
     # De-activate menu and focus previously focused element
     previouslyFocusedElement?.focus()
+
+  # TODO: Handle mouseout
+  # TODO: Handle initial click to activate
 
   document.addEventListener "mousedown", (e) ->
     unless isDescendant(e.target, element)

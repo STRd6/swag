@@ -103,10 +103,16 @@ TableView = (data) ->
   refresh: ->
     clusterize.refresh()
 
+Action = (fn) ->
+  disabled: -> false
+  hotkey: "F1"
+  call: (args...) ->
+    fn.call(args...)
+
 sampleMenuParsed = require "../samples/notepad-menu"
 MenuView = require "../views/menu"
 {element} = MenuView sampleMenuParsed,
-  new: ->
+  new: Action ->
     console.log 'New!'
 document.body.appendChild element
 
