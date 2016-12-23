@@ -47,7 +47,7 @@ isDescendant = (element, ancestor) ->
 # Parse out custom action symbol from entries like:
 #
 #     [F]ont... -> showFont
-# 
+#
 # Falling back to formatting the action title
 formatAction = (labelText) ->
   [title, action] = labelText.split("->").map F("trim")
@@ -127,7 +127,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
             else
               activeItem advance(top.items, -1)
           else # If we are in a submenu select self in the parent's items
-            if self != activeItem() 
+            if self != activeItem()
               activeItem self
             else
               activeItem parent
@@ -170,9 +170,9 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
 
       unless disabled()
         console.log "Handled", actionName
-  
+
         action?.call?(handler)
-  
+
         # TODO: More cleanup than just clearing the active item, like also we
         # should clear accelerator state, and maybe return focus to previously
         # focused element.
@@ -205,7 +205,7 @@ MenuItemView = (item, handler, parent, top, activeItem) ->
       # TODO: Click to activate top level menus unless a menu is already active
       # then hover to show.
       if isDescendant(e.target, element) and !e.defaultPrevented
-        # Note: We're just using preventDefault to prevent handling the 
+        # Note: We're just using preventDefault to prevent handling the
         # activation above the first element that handles it
         e.preventDefault()
 

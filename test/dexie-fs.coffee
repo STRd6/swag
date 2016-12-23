@@ -5,7 +5,7 @@ DB = require "../db"
 {readAsText} = require "../util"
 
 describe "Dexie FS", ->
-  db = DB('fs')
+  db = DB('fs-test')
   fs = Filesystem DexieDriver(db)
 
   it "should write, read, and delete files", (done) ->

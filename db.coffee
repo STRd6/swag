@@ -1,7 +1,7 @@
 module.exports = (dbName='fs') ->
   db = new Dexie dbName
-
+  
   db.version(1).stores
-  	files: 'path, blob, type, createdAt, updatedAt'
+  	files: 'path, blob, size, type, createdAt, updatedAt'
 
   return db

@@ -7,11 +7,15 @@ module.exports = (db) ->
     Files.get(path)
 
   write: (path, blob) ->
+    now = +new Date
+
     Files.put
       path: path
       blob: blob
+      size: blob.size
       type: blob.type
-      updatedAt: +new Date
+      createdAt: now
+      updatedAt: now
 
   delete: (path) ->
     Files.delete(path)
