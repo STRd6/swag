@@ -1,12 +1,12 @@
 CACHE MANIFEST
-# 1473532940909
+# 1482531149766
 
 CACHE:
 index.html
 ../dexie.json
 https://sdk.amazonaws.com/js/aws-sdk-2.2.42.min.js
 https://api-cdn.amazon.com/sdk/login1.js
-https://unpkg.com/dexie@1.4.1/dist/dexie.js
+https://unpkg.com/dexie@2.0.0-beta.7/dist/dexie.js
 
 NETWORK:
 https://*
