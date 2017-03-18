@@ -142,33 +142,15 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-9">&#182;</a>
     </div>
-    
+    <p>Here&#39;s the cognito pool, putting a direct link here because it&#39;s hard to find.</p>
+<p><a href="https://console.aws.amazon.com/cognito/pool/?region=us-east-1&amp;id=us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9">https://console.aws.amazon.com/cognito/pool/?region=us-east-1&amp;id=us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9</a></p>
+<p>Policy View: <a href="https://console.aws.amazon.com/iam/home?region=us-east-1#/policies/arn:aws:iam::186123361267:policy/WhimsyFS">https://console.aws.amazon.com/iam/home?region=us-east-1#/policies/arn:aws:iam::186123361267:policy/WhimsyFS</a></p>
+<p>IAM Roles: <a href="https://console.aws.amazon.com/iam/home?region=us-east-1#/roles">https://console.aws.amazon.com/iam/home?region=us-east-1#/roles</a></p>
+
   </div>
   <div class="content"><pre><code>{
     &quot;Version&quot;: &quot;2012-10-17&quot;,
     &quot;Statement&quot;: [
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: [
-                &quot;dynamodb:GetItem&quot;,
-                &quot;dynamodb:BatchGetItem&quot;,
-                &quot;dynamodb:Query&quot;,
-                &quot;dynamodb:PutItem&quot;,
-                &quot;dynamodb:UpdateItem&quot;,
-                &quot;dynamodb:DeleteItem&quot;,
-                &quot;dynamodb:BatchWriteItem&quot;
-            ],
-            &quot;Resource&quot;: [
-                &quot;arn:aws:dynamodb:us-east-1:186123361267:table/whimsy-fs&quot;
-            ],
-            &quot;Condition&quot;: {
-                &quot;ForAllValues:StringEquals&quot;: {
-                    &quot;dynamodb:LeadingKeys&quot;: [
-                        &quot;${cognito-identity.amazonaws.com:sub}&quot;
-                    ]
-                }
-            }
-        },
         {
             &quot;Action&quot;: [
                 &quot;s3:ListBucket&quot;
