@@ -16,17 +16,19 @@ Pricing: https://aws.amazon.com/s3/pricing/
 S3 Bucket Config
 ----------------
 
-You need to set up CORS on the S3 Bucket to allow posting from the browser
+You need to set up CORS on the S3 Bucket to allow access from the browser JS SDK
 
-    <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01">
-       <CORSRule>
-          <AllowedOrigin>*</AllowedOrigin>
-          <AllowedMethod>GET</AllowedMethod>
-          <AllowedMethod>PUT</AllowedMethod>
-          <AllowedMethod>POST</AllowedMethod>
-          <AllowedMethod>DELETE</AllowedMethod>
-          <AllowedHeader>*</AllowedHeader>
-       </CORSRule>
+    <?xml version="1.0" encoding="UTF-8"?>
+    <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+        <CORSRule>
+            <AllowedOrigin>*</AllowedOrigin>
+            <AllowedMethod>GET</AllowedMethod>
+            <AllowedMethod>HEAD</AllowedMethod>
+            <AllowedMethod>PUT</AllowedMethod>
+            <AllowedMethod>POST</AllowedMethod>
+            <AllowedMethod>DELETE</AllowedMethod>
+            <AllowedHeader>*</AllowedHeader>
+        </CORSRule>
     </CORSConfiguration>
 
 Set up public read policy on S3 Bucket
