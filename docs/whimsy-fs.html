@@ -56,18 +56,20 @@
     <div class="pilwrap">
       <a class="pilcrow" href="#section-4">&#182;</a>
     </div>
-    <p>You need to set up CORS on the S3 Bucket to allow posting from the browser</p>
+    <p>You need to set up CORS on the S3 Bucket to allow access from the browser JS SDK</p>
 
   </div>
-  <div class="content"><pre><code>&lt;CORSConfiguration xmlns=&quot;http://s3.amazonaws.com/doc/2006-03-01&quot;&gt;
-   &lt;CORSRule&gt;
-      &lt;AllowedOrigin&gt;*&lt;/AllowedOrigin&gt;
-      &lt;AllowedMethod&gt;GET&lt;/AllowedMethod&gt;
-      &lt;AllowedMethod&gt;PUT&lt;/AllowedMethod&gt;
-      &lt;AllowedMethod&gt;POST&lt;/AllowedMethod&gt;
-      &lt;AllowedMethod&gt;DELETE&lt;/AllowedMethod&gt;
-      &lt;AllowedHeader&gt;*&lt;/AllowedHeader&gt;
-   &lt;/CORSRule&gt;
+  <div class="content"><pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;CORSConfiguration xmlns=&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;&gt;
+    &lt;CORSRule&gt;
+        &lt;AllowedOrigin&gt;*&lt;/AllowedOrigin&gt;
+        &lt;AllowedMethod&gt;GET&lt;/AllowedMethod&gt;
+        &lt;AllowedMethod&gt;HEAD&lt;/AllowedMethod&gt;
+        &lt;AllowedMethod&gt;PUT&lt;/AllowedMethod&gt;
+        &lt;AllowedMethod&gt;POST&lt;/AllowedMethod&gt;
+        &lt;AllowedMethod&gt;DELETE&lt;/AllowedMethod&gt;
+        &lt;AllowedHeader&gt;*&lt;/AllowedHeader&gt;
+    &lt;/CORSRule&gt;
 &lt;/CORSConfiguration&gt;</code></pre>
 </div>
 </li>
