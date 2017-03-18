@@ -68,31 +68,17 @@ Create A (Alias record) pointing to cloudfront distribution
 AWS Cognito User Policy
 -----------------------
 
+Here's the cognito pool, putting a direct link here because it's hard to find.
+
+https://console.aws.amazon.com/cognito/pool/?region=us-east-1&id=us-east-1:4fe22da5-bb5e-4a78-a260-74ae0a140bf9
+
+Policy View: https://console.aws.amazon.com/iam/home?region=us-east-1#/policies/arn:aws:iam::186123361267:policy/WhimsyFS
+
+IAM Roles: https://console.aws.amazon.com/iam/home?region=us-east-1#/roles
+
     {
         "Version": "2012-10-17",
         "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "dynamodb:GetItem",
-                    "dynamodb:BatchGetItem",
-                    "dynamodb:Query",
-                    "dynamodb:PutItem",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:DeleteItem",
-                    "dynamodb:BatchWriteItem"
-                ],
-                "Resource": [
-                    "arn:aws:dynamodb:us-east-1:186123361267:table/whimsy-fs"
-                ],
-                "Condition": {
-                    "ForAllValues:StringEquals": {
-                        "dynamodb:LeadingKeys": [
-                            "${cognito-identity.amazonaws.com:sub}"
-                        ]
-                    }
-                }
-            },
             {
                 "Action": [
                     "s3:ListBucket"
