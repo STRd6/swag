@@ -7,23 +7,20 @@ PixelEditor = require "./pixel_editor"
 EditorTemplate = require "./templates/editor"
 FolderTemplate = require "./templates/folder"
 FolderPresenter = require "./presenters/folder"
+LauncherElement = require "./templates/launcher"
+
+{readAsText} = require "../util"
 
 module.exports = ->
   appHandlers =
     "^text": (file, path) ->
       editor = TextEditor(self)
 
-      reader = new FileReader
-
-      reader.onload = ->
-        editor.contents reader.result
+      readAsText(file)
+      .then (contents) ->
+        editor.contents contents
         editor.contentType file.type
         editor.path path
-
-      reader.onerror = (e) ->
-        console.error e
-
-      reader.readAsText(file)
 
       return EditorTemplate editor
 
@@ -44,11 +41,12 @@ module.exports = ->
       self.fs = -> fs
 
     open: (path) ->
-      console.log "Open: ", path
-      self.fs().get(path)
-      .then (file) ->
-        type = file.type
+      self.fs().read(path)
+      .then ({blob}) ->
+        type = blob.type
+        console.log "Open: ", path, blob.type
         handled = false
+
         Object.keys(appHandlers).forEach (matcher) ->
           return if handled
 
@@ -57,15 +55,25 @@ module.exports = ->
 
           if regex.test(type)
             handled = true
-            appElement = handler(file, path)
+            appElement = handler(blob, path)
 
             self.editorElement appElement
 
     list: (path) ->
-      self.fs().list path
+      self.fs().ls path
 
     put: (path, file) ->
-      self.fs().put path, file
+      self.fs().write path, file
 
     delete: (path) ->
       self.fs().delete path
+
+    apps: [{
+      name: "Pixel"
+      launch: ->
+        self.editorElement PixelEditor(self)
+    }]
+
+  self.launcherElement = LauncherElement(self)
+
+  return self

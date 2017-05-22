@@ -22,3 +22,26 @@ module.exports =
   emptyElement: (element) ->
     while element.lastChild
       element.lastChild.remove()
+
+  readAsText: (file) ->
+    new Promise (resolve, reject) ->
+      reader = new FileReader
+      reader.onload = ->
+        resolve reader.result
+      reader.onerror = reject
+      reader.readAsText(file)
+
+  uniq: (array) ->
+    Array.from new Set array
+
+  htmlEscape: (string) ->
+    String(string).replace /[&<>"'\/]/g, (s) ->
+      entityMap[s]
+
+entityMap =
+  "&": "&amp;"
+  "<": "&lt;"
+  ">": "&gt;"
+  '"': '&quot;'
+  "'": '&#39;'
+  "/": '&#x2F;'

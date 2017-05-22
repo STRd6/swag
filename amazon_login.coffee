@@ -1,13 +1,40 @@
-window.onAmazonLoginReady = ->
-  amazon.Login.setClientId('amzn1.application-oa2-client.29b275f9076a406c90a66b025fab96bf')
+{pinvoke} = require "./util"
 
-do (d=document) ->
-  r = d.createElement 'div'
-  r.id = "amazon-root"
-  d.body.appendChild r
-  a = d.createElement('script')
-  a.type = 'text/javascript'
-  a.async = true
-  a.id = 'amazon-login-sdk'
-  a.src = 'https://api-cdn.amazon.com/sdk/login1.js'
-  r.appendChild(a)
+amazon.Login.setClientId('amzn1.application-oa2-client.29b275f9076a406c90a66b025fab96bf')
+
+queryUserInfo = (token) ->
+  fetch "https://api.amazon.com/user/profile",
+    headers:
+      Authorization: "bearer #{token}"
+      Accept: "application/json"
+  .then (response) ->
+    response.json()
+  .then (json) ->
+    console.log json
+  .catch (e) ->
+    console.error e
+
+module.exports =
+  awsLogin: (options) ->
+    new Promise (resolve, reject) ->
+      amazon.Login.authorize options, (resp) ->
+        if resp.error
+          return reject resp
+
+        console.log resp
+        token = resp.access_token
+        creds = AWS.config.credentials
+
+        logins =
+          'www.amazon.com': token
+
+        creds.params.Logins = logins
+        creds.expired = true
+
+        queryUserInfo(token)
+
+        # NOTE: This sets AWS.config.credentials as a side effect
+        pinvoke AWS.config.credentials, "get"
+        .then ->
+          resolve logins
+        , reject

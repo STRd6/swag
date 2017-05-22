@@ -1,0 +1,3 @@
+launcher
+  - @apps.forEach (app) ->
+    app(click=app.launch)= app.name

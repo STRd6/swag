@@ -1,0 +1,7 @@
+container
+  table(@keydown)
+    thead
+      tr
+        - @headers.forEach (header) ->
+          th= header
+    tbody

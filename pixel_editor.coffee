@@ -9,7 +9,9 @@ module.exports = (os, file, path) ->
 
     # Action to perform when the editor is loaded
     childLoaded: ->
-      postmaster.invokeRemote "loadFile", file
+      if file
+        postmaster.invokeRemote "loadFile", file
+
       frame.contentWindow.focus()
 
       return
